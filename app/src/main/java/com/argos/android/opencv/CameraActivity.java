@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
@@ -25,8 +24,6 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
             {
                 case BaseLoaderCallback.SUCCESS:
                 {
-                    Log.d(TAG, "OpenCV successfully loaded");
-                    System.loadLibrary("native-lib");
                     cameraView.enableView();
                     break;
                 }
@@ -39,6 +36,11 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
             }
         }
     };
+
+    static
+    {
+        System.loadLibrary("native-lib");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -94,7 +96,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
         if(OpenCVLoader.initDebug())
         {
             Log.d(TAG, "OpenCV successfully loaded");
-            loader.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            loader.onManagerConnected(BaseLoaderCallback.SUCCESS);
         }
         else
         {
