@@ -3,10 +3,13 @@ package com.argos.android.opencv;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.SurfaceView;
 import android.view.View;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 public class CameraActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2
@@ -14,7 +17,6 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     private static final String TAG = "CameraActivity";
     private View decorView;
     private CameraBridgeViewBase cameraView;
-    private Mat rgbMat;
     private BaseLoaderCallback loader = new BaseLoaderCallback(this)
     {
         @Override
@@ -22,8 +24,9 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
         {
             switch (status)
             {
-                case BaseLoaderCallback.SUCCESS:
+                case LoaderCallbackInterface.SUCCESS:
                 {
+                    System.loadLibrary("NativeArgOS");
                     cameraView.enableView();
                     break;
                 }
@@ -37,10 +40,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
         }
     };
 
-    static
-    {
-        System.loadLibrary("native-lib");
-    }
+    Mat inputMat, outputMat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -56,13 +56,13 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     {
         decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility
-        (
-            View.SYSTEM_UI_FLAG_FULLSCREEN |
-            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        );
+                (
+                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                );
         cameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
-        cameraView.setVisibility(View.VISIBLE);
+        cameraView.setVisibility(SurfaceView.VISIBLE);
     }
 
     public void initListener()
@@ -96,7 +96,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
         if(OpenCVLoader.initDebug())
         {
             Log.d(TAG, "OpenCV successfully loaded");
-            loader.onManagerConnected(BaseLoaderCallback.SUCCESS);
+            loader.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
         else
         {
@@ -108,7 +108,8 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     @Override
     public void onCameraViewStarted(int width, int height)
     {
-
+        inputMat = new Mat(height, width, CvType.CV_8UC4);
+        outputMat = new Mat(height, width, CvType.CV_8UC1);
     }
 
     @Override
@@ -120,7 +121,9 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame)
     {
-        rgbMat = inputFrame.rgba();
-        return rgbMat;
+        inputMat = inputFrame.rgba();
+        Native.convertGray(inputMat.getNativeObjAddr(), outputMat.getNativeObjAddr());
+
+        return outputMat;
     }
 }
