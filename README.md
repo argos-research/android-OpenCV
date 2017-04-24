@@ -11,3 +11,6 @@ OpenCV-based object detection on Android using the speed-dreams simulator.
 
 4. Add path to local OpenCV Android SDK in [Android.mk](https://github.com/argos-research/android-OpenCV/blob/master/app/src/main/jni/Android.mk)
 > OPENCV_SDK:=/Users/chandruscm/AppDevelopment/Android/Libraries/OpenCV-android-sdk/sdk
+
+5. Add appropriate CPU architecture in [Application.mk](https://github.com/argos-research/android-OpenCV/blob/master/app/src/main/jni/Application.mk)
+> APP_ABI := armeabi-v7a
