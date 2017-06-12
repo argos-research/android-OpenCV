@@ -3,6 +3,7 @@
           package="com.argos.android.opencv">
 
     <uses-permission android:name="android.permission.CAMERA"/>
+
     <uses-feature android:name="android.hardware.camera"/>
     <uses-feature android:name="android.hardware.camera.autofocus"/>
     <uses-feature android:name="android.hardware.camera.front"/>
@@ -14,19 +15,24 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/main_theme">
-        <activity
-            android:name=".MainActivity"
-            android:screenOrientation="portrait">
+        <activity android:name=".Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:name=".CameraActivity"
-            android:theme="@style/camera_theme"
+            android:name=".Activity.CameraActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="landscape"
-            android:launchMode="singleTop">
+            android:theme="@style/camera_theme">
+        </activity>
+        <activity
+            android:name=".Activity.ImageLoadActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="landscape"
+            android:theme="@style/camera_theme">
         </activity>
     </application>
 

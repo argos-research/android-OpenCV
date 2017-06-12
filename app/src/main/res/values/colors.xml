@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#17a5b8</color>
-    <color name="accent">#008b96</color>
-    <color name="background">#eeeeee</color>
-    <color name="fab_normal">#ff7700</color>
+    <color name="primary">#303030</color>
+    <color name="accent">#292929</color>
+    <color name="background">#424242</color>
+    <color name="fab_normal">#00C853</color>
+    <color name="divider">#565656</color>
+    <color name="text_primary">#fafafa</color>
+    <color name="text_secondary">#B9B9B9</color>
 </resources>

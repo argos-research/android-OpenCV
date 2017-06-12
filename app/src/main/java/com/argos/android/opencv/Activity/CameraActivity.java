@@ -1,15 +1,16 @@
-package com.argos.android.opencv;
+package com.argos.android.opencv.Activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
+import com.argos.android.opencv.Driving.AutoDriveMode;
+import com.argos.android.opencv.R;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 public class CameraActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2
@@ -17,6 +18,10 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     private static final String TAG = "CameraActivity";
     private View decorView;
     private CameraBridgeViewBase cameraView;
+
+    private final int SCREEN_WIDTH = 640;
+    private final int SCREEN_HEIGHT = 480;
+
     private BaseLoaderCallback loader = new BaseLoaderCallback(this)
     {
         @Override
@@ -26,6 +31,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
             {
                 case LoaderCallbackInterface.SUCCESS:
                 {
+                    System.loadLibrary("opencv_java3");
                     System.loadLibrary("NativeArgOS");
                     cameraView.enableView();
                     break;
@@ -39,8 +45,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
             }
         }
     };
-
-    Mat inputMat, outputMat;
+    AutoDriveMode driveMode = new AutoDriveMode();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -63,6 +68,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
                 );
         cameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
         cameraView.setVisibility(SurfaceView.VISIBLE);
+        cameraView.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
     public void initListener()
@@ -108,8 +114,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     @Override
     public void onCameraViewStarted(int width, int height)
     {
-        inputMat = new Mat(height, width, CvType.CV_8UC4);
-        outputMat = new Mat(height, width, CvType.CV_8UC1);
+        cameraView.enableFpsMeter();
     }
 
     @Override
@@ -121,9 +126,6 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame)
     {
-        inputMat = inputFrame.rgba();
-        Native.convertGray(inputMat.getNativeObjAddr(), outputMat.getNativeObjAddr());
-
-        return outputMat;
+        return driveMode.processImage(inputFrame.rgba());
     }
 }

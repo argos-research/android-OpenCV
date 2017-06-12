@@ -1,0 +1,68 @@
+#include "com_argos_android_opencv_Driving_AutoDrive.h"
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <android/log.h>
+#include "lanefinder.h"
+
+using namespace std;
+using namespace cv;
+
+Mat processed;
+Point pts[6] = {
+    Point(0, 480),
+    Point(0, 250),
+    Point(240, 200),
+    Point(400, 200),
+    Point(640, 250),
+    Point(640, 480)
+};
+
+void processImage(Mat);
+void setROI();
+void drawDebugLines(Mat&);
+
+JNIEXPORT void JNICALL Java_com_argos_android_opencv_Driving_AutoDrive_reset
+        (JNIEnv *, jclass)
+{
+
+}
+
+JNIEXPORT void JNICALL Java_com_argos_android_opencv_Driving_AutoDrive_drive
+        (JNIEnv *, jclass,  jlong srcMat, jlong outMat)
+{
+    Mat& original = *(Mat*) srcMat;
+    Mat& output = *(Mat*) outMat;
+
+    processImage(original);
+    setROI();
+
+    LaneFinder laneFinder(processed, original);
+    laneFinder.find();
+
+    drawDebugLines(original);
+    output = original;
+}
+
+void processImage(Mat image)
+{
+    cvtColor(image, processed, CV_RGBA2GRAY);
+    GaussianBlur(processed, processed, Size(5,5), 0, 0);
+    Canny(processed, processed, 200, 300, 3);
+}
+
+void setROI()
+{
+    Mat mask(processed.size(), CV_8U);
+    fillConvexPoly(mask, pts, 6, Scalar(255) );
+    bitwise_and(mask, processed, processed);
+}
+
+void drawDebugLines(Mat& original)
+{
+    line(original, pts[0], pts[1], Scalar(255, 0, 0), 1, CV_AA);
+    line(original, pts[1], pts[2], Scalar(255, 0, 0), 1, CV_AA);
+    line(original, pts[2], pts[3], Scalar(255, 0, 0), 1, CV_AA);
+    line(original, pts[3], pts[4], Scalar(255, 0, 0), 1, CV_AA);
+    line(original, pts[4], pts[5], Scalar(255, 0, 0), 1, CV_AA);
+    line(original, pts[5], pts[0], Scalar(255, 0, 0), 1, CV_AA);
+}
