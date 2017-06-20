@@ -21,26 +21,17 @@ void processImage(Mat);
 void setROI();
 void drawDebugLines(Mat&);
 
-JNIEXPORT void JNICALL Java_com_argos_android_opencv_Driving_AutoDrive_reset
-        (JNIEnv *, jclass)
-{
-
-}
-
-JNIEXPORT void JNICALL Java_com_argos_android_opencv_Driving_AutoDrive_drive
-        (JNIEnv *, jclass,  jlong srcMat, jlong outMat)
+JNIEXPORT jstring JNICALL Java_com_argos_android_opencv_Driving_AutoDrive_drive
+        (JNIEnv* env, jclass, jlong srcMat)
 {
     Mat& original = *(Mat*) srcMat;
-    Mat& output = *(Mat*) outMat;
 
     processImage(original);
     setROI();
+    drawDebugLines(original);
 
     LaneFinder laneFinder(processed, original);
-    laneFinder.find();
-
-    drawDebugLines(original);
-    output = original;
+    return env->NewStringUTF(laneFinder.find());
 }
 
 void processImage(Mat image)

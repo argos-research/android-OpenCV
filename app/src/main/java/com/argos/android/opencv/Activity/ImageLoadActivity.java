@@ -4,7 +4,8 @@ import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
-import com.argos.android.opencv.Driving.AutoDriveMode;
+
+import com.argos.android.opencv.Driving.AutoDrive;
 import com.argos.android.opencv.R;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -15,7 +16,6 @@ public class ImageLoadActivity extends AppCompatActivity
     private static final String TAG = "ImageLoadActivity";
     private Mat image;
     private ImageView imageView;
-    private AutoDriveMode driveMode = new AutoDriveMode();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -53,7 +53,7 @@ public class ImageLoadActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        driveMode.processImage(image);
+        AutoDrive.drive(image.getNativeObjAddr());
     }
 
     public void setImage()

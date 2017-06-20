@@ -30,12 +30,6 @@ public:
          * coordinate[3] = y2
          */
 
-        /*
-         * Why this doesn't work?
-         * Because the below parameters require the value of c and m which is only found later with
-         * the provided coordinates.
-         */
-
         this->coordinates[0] = (minY - c) / m;
         this->coordinates[1] = minY;
         this->coordinates[2] = (maxY - c) / m;

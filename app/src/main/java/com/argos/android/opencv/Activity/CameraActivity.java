@@ -5,7 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
-import com.argos.android.opencv.Driving.AutoDriveMode;
+import android.widget.ImageView;
+import com.argos.android.opencv.Driving.AutoDrive;
 import com.argos.android.opencv.R;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -18,7 +19,8 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     private static final String TAG = "CameraActivity";
     private View decorView;
     private CameraBridgeViewBase cameraView;
-
+    private ImageView directionView;
+    private int[] directionDrawable = {R.drawable.straight, R.drawable.left, R.drawable.right};
     private final int SCREEN_WIDTH = 640;
     private final int SCREEN_HEIGHT = 480;
 
@@ -45,7 +47,6 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
             }
         }
     };
-    AutoDriveMode driveMode = new AutoDriveMode();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -69,6 +70,8 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
         cameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
         cameraView.setVisibility(SurfaceView.VISIBLE);
         cameraView.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        directionView = (ImageView) findViewById(R.id.direction);
     }
 
     public void initListener()
@@ -126,6 +129,37 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame)
     {
-        return driveMode.processImage(inputFrame.rgba());
+        Mat srcMat = inputFrame.rgba();
+        changeDirection(AutoDrive.drive(srcMat.getNativeObjAddr()));
+        return srcMat;
+    }
+
+    public void changeDirection(final String direction)
+    {
+        runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                switch (direction)
+                {
+                    case "S":
+                    {
+                        directionView.setImageDrawable(getResources().getDrawable(directionDrawable[0]));
+                        break;
+                    }
+                    case "L":
+                    {
+                        directionView.setImageDrawable(getResources().getDrawable(directionDrawable[1]));
+                        break;
+                    }
+                    case "R":
+                    {
+                        directionView.setImageDrawable(getResources().getDrawable(directionDrawable[2]));
+                        break;
+                    }
+                }
+            }
+        });
     }
 }

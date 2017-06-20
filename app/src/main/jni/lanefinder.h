@@ -10,6 +10,7 @@ using namespace std;
 using namespace cv;
 
 char* TAG = "Nativelog";
+char* DIRECTION_TAG = "Directionlog";
 
 class LaneFinder
 {
@@ -22,6 +23,9 @@ private:
     int horizonY;
     int bottomY;
 
+    double m1;
+    double m2;
+
 public:
 
     LaneFinder(Mat processed, Mat original)
@@ -31,9 +35,12 @@ public:
 
         horizonY = 300;
         bottomY = 480;
+
+        m1 = 0;
+        m2 = 0;
     };
 
-    void find()
+    char* find()
     {
         vector<Vec4i> houghLines;
         HoughLinesP(image, houghLines, 1, CV_PI / 180, 100, 100, 50);
@@ -143,14 +150,52 @@ public:
             line(output, Point(lane[0], lane[1]), Point(lane[2], lane[3]), Scalar(0, 255, 0), 6, CV_AA);
         }
 
+        //Note: Left lanes have negative slope
         switch (finalLanes.size())
         {
-            case 0: //TODO: No lanes found, go straight
-                break;
-            case 1: //TODO: Too close to one lane, move towards opposite lane
-                break;
-            case 2: //TODO: Steer to middle
-                break;
+            case 0:
+            {
+                __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "straight");
+                return "S";
+            }
+
+            case 1:
+            {
+                m1 = finalLanes[0].first;
+
+                if (m1 < 0)
+                {
+                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "right");
+                    return "R";
+                }
+                else
+                {
+                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "left");
+                    return "L";
+                }
+            }
+
+            default:
+            {
+                m1 = finalLanes[0].first;
+                m2 = finalLanes[1].first;
+
+                if ((m1 < 0) && (m2 < 0))
+                {
+                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "right");
+                    return "R";
+                }
+                else if ((m1 > 0) && (m2 > 0))
+                {
+                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "left");
+                    return "L";
+                }
+                else
+                {
+                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "straight");
+                    return "S";
+                }
+            }
         }
     }
 
