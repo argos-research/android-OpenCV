@@ -17,7 +17,7 @@ public class ChooseImageDialogFragment extends BottomSheetDialogFragment
 {
     private RecyclerView recyclerView;
     private ImageListAdapter imageListAdapter;
-    private int[] images = {R.drawable.scene_1, R.drawable.scene_2, R.drawable.scene_3, R.drawable.scene_4};
+    private int[] images = {R.drawable.scene_1, R.drawable.scene_2};
 
     @Override
     public void setupDialog(Dialog dialog, int style)
