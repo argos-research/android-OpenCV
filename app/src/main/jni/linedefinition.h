@@ -1,6 +1,11 @@
 #ifndef ANDROID_OPENCV_LINEDEFINITION_H
 #define ANDROID_OPENCV_LINEDEFINITION_H
 
+/*
+ * Data structure for a line.
+ * Coordinates are corrected using minY and maxY
+ */
+
 using namespace std;
 using namespace cv;
 
@@ -23,7 +28,7 @@ public:
         m = getSlope();
         c = getIntercept();
 
-        /*
+        /**
          * coordinate[0] = x1
          * coordinate[1] = y1
          * coordinate[2] = x2

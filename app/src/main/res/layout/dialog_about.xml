@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/margin_normal"
+    android:paddingTop="@dimen/margin_large"
+    android:paddingEnd="@dimen/margin_normal"
+    android:paddingBottom="@dimen/margin_large"
+    android:background="@color/primary">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/margin_normal"
+        android:text="@string/dialog_title_about"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_normal"
+        android:id="@+id/title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:textColor="@color/text_secondary"
+        android:id="@+id/version"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:paddingBottom="@dimen/margin_normal"
+        android:text="@string/about"
+        android:textColor="@color/text_secondary"
+        android:id="@+id/about"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/about"
+        android:text="@string/about_developer"
+        android:textColor="@color/text_primary"
+        android:id="@+id/developer"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/developer"
+        android:paddingBottom="@dimen/margin_normal"
+        android:text="@string/about_organisation"
+        android:textColor="@color/text_secondary"
+        android:id="@+id/organisation"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/organisation">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:id="@+id/credits_block">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_source_code"
+                android:textColor="@color/text_primary"
+                android:id="@+id/source_code"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/license"
+                android:textStyle="italic"
+                android:textColor="@color/text_secondary"
+                android:id="@+id/license"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button_github"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:text="@string/button_github"
+            android:drawablePadding="@dimen/margin_small"
+            android:drawableEnd="@drawable/ic_github_logo"
+            android:textAllCaps="false"
+            android:backgroundTint="@color/fab_normal"
+            android:textColor="@color/text_primary"/>
+
+    </RelativeLayout>
+</RelativeLayout>
+

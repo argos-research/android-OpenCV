@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 import com.argos.android.opencv.Driving.AutoDrive;
 import com.argos.android.opencv.R;
 import org.opencv.android.BaseLoaderCallback;
@@ -14,6 +15,10 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
+/**
+ * Activity to run the OpenCV algorithm on Camera
+ */
+
 public class CameraActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2
 {
     private static final String TAG = "CameraActivity";
@@ -21,8 +26,17 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     private CameraBridgeViewBase cameraView;
     private ImageView directionView;
     private int[] directionDrawable = {R.drawable.straight, R.drawable.left, R.drawable.right};
+
+    /**
+     * 640x480 produced the best FPS on moderate smart phones.
+     * TODO: Implement choosing screen width and height within the app.
+     *  Note that the ROI is also hardcoded considering dimensions as 640x480, you might need to change that too!
+     */
     private final int SCREEN_WIDTH = 640;
     private final int SCREEN_HEIGHT = 480;
+
+    private String feature;
+    private String cascadeFilePath;
 
     private BaseLoaderCallback loader = new BaseLoaderCallback(this)
     {
@@ -54,8 +68,15 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        initExtras();
         initView();
         initListener();
+    }
+
+    public void initExtras()
+    {
+        feature = getIntent().getExtras().getString("feature");
+        cascadeFilePath = getIntent().getExtras().getString("cascadeFilePath");
     }
 
     public void initView()
@@ -67,11 +88,11 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
                                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 );
-        cameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
+        cameraView = (CameraBridgeViewBase) findViewById(R.id.opencv_cameraview);
         cameraView.setVisibility(SurfaceView.VISIBLE);
         cameraView.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        directionView = (ImageView) findViewById(R.id.direction);
+        directionView = (ImageView) findViewById(R.id.imageview_direction);
     }
 
     public void initListener()
@@ -130,7 +151,20 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame)
     {
         Mat srcMat = inputFrame.rgba();
-        changeDirection(AutoDrive.drive(srcMat.getNativeObjAddr()));
+
+        if(feature.equals(getString(R.string.feature_lane)))
+        {
+            changeDirection(AutoDrive.drive(srcMat.getNativeObjAddr()));
+        }
+        else
+        {
+            removeDirectionView();
+            if (MainActivity.CASCADE_FILE_LOADED)
+                AutoDrive.detectVehicle(cascadeFilePath, srcMat.getNativeObjAddr());
+            else
+                Toast.makeText(this, "Error: Cascade file not loaded", Toast.LENGTH_SHORT).show();
+        }
+
         return srcMat;
     }
 
@@ -141,6 +175,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
             @Override
             public void run()
             {
+                directionView.setVisibility(View.VISIBLE);
                 switch (direction)
                 {
                     case "S":
@@ -159,6 +194,18 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
                         break;
                     }
                 }
+            }
+        });
+    }
+
+    public void removeDirectionView()
+    {
+        runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                directionView.setVisibility(View.INVISIBLE);
             }
         });
     }

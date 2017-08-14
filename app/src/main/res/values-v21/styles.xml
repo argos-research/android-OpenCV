@@ -8,6 +8,7 @@
         <item name="android:navigationBarColor">@color/primary</item>
         <item name="android:statusBarColor">@color/accent</item>
         <item name="android:windowBackground">@color/background</item>
+        <item name="android:colorControlHighlight">@color/fab_normal</item>
     </style>
 
 </resources>

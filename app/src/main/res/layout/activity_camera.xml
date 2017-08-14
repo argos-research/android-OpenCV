@@ -8,7 +8,7 @@
     <org.opencv.android.JavaCameraView
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:id="@+id/camera_view"/>
+        android:id="@+id/opencv_cameraview"/>
 
     <ImageView
         android:layout_width="wrap_content"
@@ -16,6 +16,6 @@
         android:padding="@dimen/margin_normal"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/straight"
-        android:tint="@android:color/holo_red_light"
-        android:id="@+id/direction"/>
+        android:tint="@color/arrow_direction"
+        android:id="@+id/imageview_direction"/>
 </FrameLayout>

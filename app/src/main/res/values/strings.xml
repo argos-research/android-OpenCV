@@ -1,6 +1,16 @@
 <resources>
-    <string name="app_name">OpenCV</string>
+    <string name="app_name">ArgOS DriveAssist</string>
     <string name="feature_lane">Lane Detection</string>
-    <string name="feature_road_sign">Roadsign Detection</string>
-    <string name="feature_parking">Parking Assistance</string>
+    <string name="feature_vehicle">Vehicle Detection</string>
+
+    <string name="title_choose_image">Choose image</string>
+    <string name="dialog_title_about">About</string>
+    <string name="button_github">GitHub</string>
+
+    <string name="about">OpenCV-based object detection framework that provides driving assistance capabilities on the Speed Dreams simulator.</string>
+    <string name="about_developer">Chair of Operating Systems</string>
+    <string name="about_organisation">Techinical University of Munich</string>
+    <string name="about_link_github">https://github.com/argos-research/android-OpenCV</string>
+    <string name="title_source_code">Source code</string>
+    <string name="license">Apache 2.0 license</string>
 </resources>

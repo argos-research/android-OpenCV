@@ -6,10 +6,19 @@
 #include <math.h>
 #include <map>
 
+/**
+ * Lane detection approach:
+ * 0) Pre process with canny edge detection
+ * 1) Run probabilistic hough transform to detect all lines
+ * 2) Find the 2 most common slopes from all the detected lines
+ * 3) Draw lanes through the calculated minY and maxY
+ * 4) Return direction, steer percentage based on the slope of the lanes and their mid-points
+ */
+
 using namespace std;
 using namespace cv;
 
-char* TAG = "Nativelog";
+char* TAG = "LaneFinder";
 char* DIRECTION_TAG = "Directionlog";
 
 class LaneFinder
@@ -20,11 +29,27 @@ private:
     Mat image;
     Mat output;
 
+    /*
+     * y coordinates of the detected lines
+     * horizonY -> minY smallest detected y coordinate
+     * bottomY -> maxY edge of frame
+     */
     int horizonY;
     int bottomY;
 
+    /**
+     * Slopes of the final detected lanes
+     */
     double m1;
     double m2;
+
+    /**
+     * To calculate steer percentage by comparing mid point of the distance between the 2 lanes to the actual center of the frame
+     */
+    int laneMidpoint;
+    int trueMidPoint;
+
+    double steerPercentage;
 
 public:
 
@@ -38,10 +63,18 @@ public:
 
         m1 = 0;
         m2 = 0;
+
+        laneMidpoint = 320;
+        trueMidPoint = 320;
+
+        steerPercentage = 1.0;
     };
 
     char* find()
     {
+        /**
+         * 1) Run probabilistic hough transform to detect all lines
+         */
         vector<Vec4i> houghLines;
         HoughLinesP(image, houghLines, 1, CV_PI / 180, 100, 100, 50);
         int size = houghLines.size();
@@ -49,6 +82,9 @@ public:
 
         __android_log_print(ANDROID_LOG_INFO, TAG, "No. of lines %d", size);
 
+        /**
+         * Save all detected lines to vector
+         */
         for (int i = 0; i < size; i++)
         {
             Vec4i points = houghLines[i];
@@ -73,9 +109,20 @@ public:
             lines.push_back(Line(points, horizonY, bottomY));
         }
 
+        /**
+         * Map<slope, vector<Line>> lanes
+         * slope of the line
+         * Line object
+         */
         map<double, vector<Line> > lanes;
         map<double, vector<Line> >::iterator it = lanes.begin();
 
+        /**
+         * 2) Find the 2 most common slopes from all the detected lines
+         * 2.1) Iterate through each line
+         * 2.2) Group them based on their slope with an offset of +-30%
+         * 2.3) Sort them based on the no. of the lines, pick the first 2
+         */
         for (int i = 0; i < size; i++)
         {
             double m = lines[i].m;
@@ -132,7 +179,7 @@ public:
             __android_log_print(ANDROID_LOG_INFO, TAG, "Lane Slope %f hits %d", it->first, it->second.size());
             it++;
         }
-        
+
         vector<pair<double, vector<Line> > > finalLanes(lanes.begin(), lanes.end());
         sort(finalLanes.begin(), finalLanes.end(), CommonSlope<double, vector<Line> >());
 
@@ -143,6 +190,9 @@ public:
             __android_log_print(ANDROID_LOG_INFO, TAG, "Lane %d Slope %f hits %d", i, finalLanes[i].first, finalLanes[i].second.size());
         }
 
+        /**
+         *  3) Draw lanes through the calculated minY and maxY
+         */
         for (int i = 0; i < finalLanes.size() && finalLanes.size() < 3; i++)
         {
             Vec4i lane = getMeanCoordinate(finalLanes[i].second);
@@ -150,12 +200,16 @@ public:
             line(output, Point(lane[0], lane[1]), Point(lane[2], lane[3]), Scalar(0, 255, 0), 6, CV_AA);
         }
 
-        //Note: Left lanes have negative slope
+        /**
+         * 4) Return direction, steer percentage based on the slope of the lanes and their mid-points
+         * Note: Left lanes have negative slope
+         */
         switch (finalLanes.size())
         {
             case 0:
             {
-                __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "straight");
+                steerPercentage = 0.0;
+                __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "straight %f", steerPercentage);
                 return "S";
             }
 
@@ -165,12 +219,12 @@ public:
 
                 if (m1 < 0)
                 {
-                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "right");
+                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "right %f", steerPercentage);
                     return "R";
                 }
                 else
                 {
-                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "left");
+                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "left %f", steerPercentage);
                     return "L";
                 }
             }
@@ -182,23 +236,47 @@ public:
 
                 if ((m1 < 0) && (m2 < 0))
                 {
-                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "right");
+                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "right %f", steerPercentage);
                     return "R";
                 }
                 else if ((m1 > 0) && (m2 > 0))
                 {
-                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "left");
+                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "left %f", steerPercentage);
                     return "L";
                 }
                 else
                 {
-                    __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "straight");
-                    return "S";
+                    Vec4i lane1 = getMeanCoordinate(finalLanes[0].second);
+                    Vec4i lane2 = getMeanCoordinate(finalLanes[1].second);
+                    laneMidpoint = lane1[0] + (lane2[0] - lane1[0])/2 ;
+                    __android_log_print(ANDROID_LOG_INFO, TAG, "Final lanes x coordinates %d %d Lane midpoint %d ", lane1[0], lane2[0], laneMidpoint);
+
+                    if((trueMidPoint * 0.9) <= laneMidpoint <= (trueMidPoint * 1.1))
+                    {
+                        steerPercentage = 0.0;
+                        __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "straight %f", steerPercentage);
+                        return "S";
+                    }
+                    else if ((trueMidPoint * 0.9) > laneMidpoint)
+                    {
+                        steerPercentage = 1 - laneMidpoint / trueMidPoint;
+                        __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "right %f", steerPercentage);
+                        return "R";
+                    }
+                    else
+                    {
+                        steerPercentage = 1 - trueMidPoint / laneMidpoint;
+                        __android_log_print(ANDROID_LOG_INFO, DIRECTION_TAG, "left %f", steerPercentage);
+                        return "L";
+                    }
                 }
             }
         }
     }
 
+    /*
+     * Each common slope is associated with a group of lines, take their mean coordinates for the lane coordinates
+     */
     Vec4i getMeanCoordinate(vector<Line> lines)
     {
         Vec4i meanCoordinate;
@@ -213,6 +291,9 @@ public:
         return meanCoordinate;
     }
 
+    /**
+     * Sort each item of Map<slope, vector<Line>> based on the size of vector<Line> to find the most common slope
+     */
     template<typename T1, typename T2>
     struct CommonSlope
     {

@@ -3,22 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main">
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/property_list"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        app:backgroundTint="@color/fab_normal"
-        android:src="@drawable/ic_play_arrow_white_24dp"
-        android:id="@+id/fab"/>
+        android:id="@+id/feature_list"/>
 
 </android.support.design.widget.CoordinatorLayout>
