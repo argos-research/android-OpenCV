@@ -10,7 +10,7 @@ import com.argos.android.opencv.Adapter.ImageListAdapter;
 
 /**
  * BottomSheet for choosing image. Refer {@link com.argos.android.opencv.Activity.ImageLoadActivity}
- * Add images of resolution 640x480 and include them in {@link #images}
+ * Add images of resolution 640x480 inside drawables and include them in {@link #images}
  */
 
 public class ChooseImageDialogFragment extends BottomSheetDialogFragment
