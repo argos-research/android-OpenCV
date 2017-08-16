@@ -1,5 +1,8 @@
 # Android-OpenCV
-OpenCV-based object detection on Android using the speed-dreams simulator.
+
+![alt header](https://github.com/argos-research/android-OpenCV/blob/master/screenshots/header.png)
+
+OpenCV-based object detection framework on Android that provides driving assistance capabilities on the Speed Dreams simulator.
 
 # Setup
 1. Download Android NDK and Build tools https://developer.android.com/studio/projects/add-native-code.html
