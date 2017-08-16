@@ -1,4 +1,4 @@
-# Android-OpenCV
+# ArgOS DriveAssist
 
 ![alt header](https://github.com/argos-research/android-OpenCV/blob/master/screenshots/header.png)
 
