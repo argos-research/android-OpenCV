@@ -7,7 +7,7 @@
     <string name="dialog_title_about">About</string>
     <string name="button_github">GitHub</string>
 
-    <string name="about">OpenCV-based object detection framework that provides driving assistance capabilities on the Speed Dreams simulator.</string>
+    <string name="about">OpenCV-based object detection framework on Android that provides driving assistance capabilities on the Speed Dreams simulator.</string>
     <string name="about_developer">Chair of Operating Systems</string>
     <string name="about_organisation">Techinical University of Munich</string>
     <string name="about_link_github">https://github.com/argos-research/android-OpenCV</string>
