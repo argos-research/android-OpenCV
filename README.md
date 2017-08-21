@@ -15,7 +15,7 @@ OpenCV-based object detection framework on Android that provides driving assista
 
 ![alt header](https://github.com/argos-research/android-OpenCV/blob/master/screenshots/vehicle%231.png)
 
-### UI
+# UI
 
 ![alt header](https://github.com/argos-research/android-OpenCV/blob/master/screenshots/ui%231.png)
 
