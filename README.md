@@ -16,4 +16,4 @@ OpenCV-based object detection framework on Android that provides driving assista
 > OPENCV_SDK:=/Users/chandruscm/AppDevelopment/Android/Libraries/OpenCV-android-sdk/sdk
 
 5. Add appropriate CPU architecture in [Application.mk](https://github.com/argos-research/android-OpenCV/blob/master/app/src/main/jni/Application.mk)
-> APP_ABI := armeabi-v7a
+> APP_ABI := armeabi-v7a x86
