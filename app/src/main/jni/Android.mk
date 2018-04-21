@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 #OpenCv
-OPENCV_SDK:=/Users/chandruscm/AppDevelopment/Android/Libraries/OpenCV-android-sdk/sdk
+OPENCV_SDK:=/Users/patriccorletto/Documents/uni/Bachelor/android_studio/android-OpenCV/sdkopencv34
 OPENCV_CAMERA_MODULES:=on
 OPENCV_INSTALL_MODULES:=on
 OPENCV_LIB_TYPE:=SHARED
