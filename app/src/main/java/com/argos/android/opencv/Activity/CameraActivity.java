@@ -7,8 +7,10 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import com.argos.android.opencv.Driving.AutoDrive;
 import com.argos.android.opencv.R;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
@@ -30,7 +32,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     /**
      * 640x480 produced the best FPS on moderate smart phones.
      * TODO: Implement choosing screen width and height within the app.
-     *  Note that the ROI is also hardcoded considering dimensions as 640x480, you might need to change that too!
+     * Note that the ROI is also hardcoded considering dimensions as 640x480, you might need to change that too!
      */
     private final int SCREEN_WIDTH = 640;
     private final int SCREEN_HEIGHT = 480;
@@ -83,11 +85,11 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     {
         decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility
-                (
-                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                );
+                          (
+                                  View.SYSTEM_UI_FLAG_FULLSCREEN |
+                                          View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                                          View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                          );
         cameraView = (CameraBridgeViewBase) findViewById(R.id.opencv_cameraview);
         cameraView.setVisibility(SurfaceView.VISIBLE);
         cameraView.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -105,7 +107,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     {
         super.onPause();
 
-        if(cameraView != null)
+        if (cameraView != null)
             cameraView.disableView();
     }
 
@@ -114,7 +116,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     {
         super.onDestroy();
 
-        if(cameraView != null)
+        if (cameraView != null)
             cameraView.disableView();
     }
 
@@ -123,12 +125,11 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     {
         super.onResume();
 
-        if(OpenCVLoader.initDebug())
+        if (OpenCVLoader.initDebug())
         {
             Log.d(TAG, "OpenCV successfully loaded");
             loader.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-        }
-        else
+        } else
         {
             Log.d(TAG, "OpenCV load failed");
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, this, loader);
@@ -152,11 +153,10 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     {
         Mat srcMat = inputFrame.rgba();
 
-        if(feature.equals(getString(R.string.feature_lane)))
+        if (feature.equals(getString(R.string.feature_lane)))
         {
             changeDirection(AutoDrive.drive(srcMat.getNativeObjAddr()));
-        }
-        else
+        } else
         {
             removeDirectionView();
             if (MainActivity.CASCADE_FILE_LOADED)
