@@ -1,4 +1,4 @@
-package com.argos.android.opencv.Driving;
+package com.argos.android.opencv.driving;
 
 public class AutoDrive
 {

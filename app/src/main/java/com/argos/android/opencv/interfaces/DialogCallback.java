@@ -1,4 +1,4 @@
-package com.argos.android.opencv.Interface;
+package com.argos.android.opencv.interfaces;
 
 import android.support.annotation.DrawableRes;
 

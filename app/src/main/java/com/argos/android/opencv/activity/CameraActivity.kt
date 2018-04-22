@@ -1,4 +1,4 @@
-package com.argos.android.opencv.Activity
+package com.argos.android.opencv.activity
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -7,7 +7,7 @@ import android.view.SurfaceView
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
-import com.argos.android.opencv.Driving.AutoDrive
+import com.argos.android.opencv.driving.AutoDrive
 import com.argos.android.opencv.R
 import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.CameraBridgeViewBase
@@ -61,12 +61,12 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         initListener()
     }
 
-    fun initExtras() {
+    private fun initExtras() {
         feature = intent.extras!!.getString("feature")
         cascadeFilePath = intent.extras!!.getString("cascadeFilePath")
     }
 
-    fun initView() {
+    private fun initView() {
         decorView = window.decorView
         decorView!!.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
@@ -78,7 +78,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         directionView = findViewById(R.id.imageview_direction)
     }
 
-    fun initListener() {
+    private fun initListener() {
         cameraView!!.setCvCameraViewListener(this)
     }
 
@@ -132,28 +132,22 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         return srcMat
     }
 
-    fun changeDirection(direction: String) {
+    private fun changeDirection(direction: String) {
         runOnUiThread {
             directionView!!.visibility = View.VISIBLE
             when (direction) {
-                "S" -> {
-                    directionView!!.setImageDrawable(resources.getDrawable(directionDrawable[0]))
-                }
-                "L" -> {
-                    directionView!!.setImageDrawable(resources.getDrawable(directionDrawable[1]))
-                }
-                "R" -> {
-                    directionView!!.setImageDrawable(resources.getDrawable(directionDrawable[2]))
-                }
+                "S" -> { directionView!!.setImageResource((directionDrawable[0])) }
+                "L" -> { directionView!!.setImageResource((directionDrawable[1])) }
+                "R" -> { directionView!!.setImageResource((directionDrawable[2])) }
             }
         }
     }
 
-    fun removeDirectionView() {
+    private fun removeDirectionView() {
         runOnUiThread { directionView!!.visibility = View.INVISIBLE }
     }
 
     companion object {
-        private val TAG = "CameraActivity"
+        private const val TAG = "CameraActivity"
     }
 }

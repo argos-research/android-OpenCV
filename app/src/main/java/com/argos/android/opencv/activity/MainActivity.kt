@@ -1,39 +1,35 @@
-package com.argos.android.opencv.Activity
+package com.argos.android.opencv.activity
 
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-
-import com.argos.android.opencv.Fragment.ChooseImageDialogFragment
-import com.argos.android.opencv.Interface.DialogCallback
-import com.argos.android.opencv.Interface.MainActivityCallback
-import com.argos.android.opencv.Model.Feature
+import com.argos.android.opencv.adapter.FeatureListAdapter
+import com.argos.android.opencv.fragment.ChooseImageDialogFragment
+import com.argos.android.opencv.interfaces.DialogCallback
+import com.argos.android.opencv.interfaces.MainActivityCallback
+import com.argos.android.opencv.model.Feature
 import com.argos.android.opencv.R
-import com.argos.android.opencv.Adapter.FeatureListAdapter
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.util.ArrayList
+import java.util.*
 
 class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
     private var recyclerView: RecyclerView? = null
@@ -62,12 +58,12 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
         checkPermission()
     }
 
-    fun initView() {
+    private fun initView() {
         recyclerView = findViewById<View>(R.id.feature_list) as RecyclerView
         bottomSheet = ChooseImageDialogFragment()
     }
 
-    fun initIO() {
+    private fun initIO() {
         try {
             inputStream = resources.assets.open("cascade.xml")
             val cascadeDir = getDir("cascade", Context.MODE_PRIVATE)
@@ -91,7 +87,7 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
 
     }
 
-    fun initList() {
+    private fun initList() {
         features = ArrayList()
         features!!.add(Feature(getString(R.string.feature_lane), R.drawable.lane_detection_thumbnail))
         features!!.add(Feature(getString(R.string.feature_vehicle), R.drawable.vehicle_detection_thumbnail))
@@ -99,11 +95,11 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
         layoutManager = LinearLayoutManager(this)
         recyclerView!!.layoutManager = layoutManager
 
-        adapter = FeatureListAdapter(features, this)
+        adapter = FeatureListAdapter(features!!, this)
         recyclerView!!.adapter = adapter
     }
 
-    fun checkPermission() {
+    private fun checkPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 1)
         }
@@ -122,7 +118,7 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
         return true
     }
 
-    fun showAboutDialog() {
+    private fun showAboutDialog() {
         val builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView = inflater.inflate(R.layout.dialog_about, null)
@@ -163,7 +159,7 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
     }
 
     companion object {
-        private val TAG = "MainActivity"
+        private const val TAG = "MainActivity"
         private var version: String? = null
         var CASCADE_FILE_LOADED = true
     }

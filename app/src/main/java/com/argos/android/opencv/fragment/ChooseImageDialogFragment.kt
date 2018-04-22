@@ -1,15 +1,15 @@
-package com.argos.android.opencv.Fragment
+package com.argos.android.opencv.fragment
 
 import android.app.Dialog
 import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import com.argos.android.opencv.adapter.ImageListAdapter
 import com.argos.android.opencv.R
-import com.argos.android.opencv.Adapter.ImageListAdapter
 
 /**
- * BottomSheet for choosing image. Refer [com.argos.android.opencv.Activity.ImageLoadActivity]
+ * BottomSheet for choosing image. Refer [com.argos.android.opencv.activity.ImageLoadActivity]
  * Add images of resolution 640x480 inside drawables and include them in [.images]
  */
 

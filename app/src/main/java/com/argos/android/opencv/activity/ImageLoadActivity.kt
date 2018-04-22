@@ -1,4 +1,4 @@
-package com.argos.android.opencv.Activity
+package com.argos.android.opencv.activity
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -6,7 +6,7 @@ import android.support.annotation.DrawableRes
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
 import android.widget.Toast
-import com.argos.android.opencv.Driving.AutoDrive
+import com.argos.android.opencv.driving.AutoDrive
 import com.argos.android.opencv.R
 import org.opencv.android.Utils
 import org.opencv.core.Mat
@@ -17,7 +17,7 @@ import java.io.IOException
  * Activity to run the OpenCV algorithm on images
  * To add new images:
  * 1) Add images inside the drawable directory
- * 2) Include drawables in the images array [com.argos.android.opencv.Fragment.ChooseImageDialogFragment.images]
+ * 2) Include drawables in the images array [com.argos.android.opencv.fragment.ChooseImageDialogFragment.images]
  */
 
 class ImageLoadActivity : AppCompatActivity() {
@@ -42,22 +42,22 @@ class ImageLoadActivity : AppCompatActivity() {
         setImage()
     }
 
-    fun loadLibraries() {
+    private fun loadLibraries() {
         System.loadLibrary("opencv_java3")
         System.loadLibrary("NativeArgOS")
     }
 
-    fun initExtras() {
+    private fun initExtras() {
         imageRes = intent.extras!!.getInt("image")
         feature = intent.extras!!.getString("feature")
         cascadeFilePath = intent.extras!!.getString("cascadeFilePath")
     }
 
-    fun initView() {
+    private fun initView() {
         imageView = findViewById(R.id.image_view)
     }
 
-    fun processImage() {
+    private fun processImage() {
         image = Mat()
 
         try {
@@ -76,7 +76,7 @@ class ImageLoadActivity : AppCompatActivity() {
         }
     }
 
-    fun setImage() {
+    private fun setImage() {
         /**
          * OpenCV uses BGR as its default colour order for image
          * See https://stackoverflow.com/questions/39316447/opencv-giving-wrong-color-to-colored-images-on-loading
@@ -89,6 +89,6 @@ class ImageLoadActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val TAG = "ImageLoadActivity"
+        private const val TAG = "ImageLoadActivity"
     }
 }

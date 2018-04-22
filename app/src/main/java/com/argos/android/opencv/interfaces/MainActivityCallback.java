@@ -1,6 +1,6 @@
-package com.argos.android.opencv.Interface;
+package com.argos.android.opencv.interfaces;
 
-import com.argos.android.opencv.Model.Feature;
+import com.argos.android.opencv.model.Feature;
 
 /**
  * Interfacing {@link com.argos.android.opencv.adapter.FeatureListAdapter} -> {@link com.argos.android.opencv.activity.MainActivity}
