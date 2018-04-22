@@ -3,7 +3,7 @@ package com.argos.android.opencv.Interface;
 import com.argos.android.opencv.Model.Feature;
 
 /**
- * Interfacing {@link com.argos.android.opencv.Adapter.FeatureListAdapter} -> {@link com.argos.android.opencv.Activity.MainActivity}
+ * Interfacing {@link com.argos.android.opencv.adapter.FeatureListAdapter} -> {@link com.argos.android.opencv.activity.MainActivity}
  */
 
 public interface MainActivityCallback

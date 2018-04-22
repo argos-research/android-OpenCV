@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/main_theme">
         <activity
-            android:name=".Activity.MainActivity"
+            android:name=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -25,13 +25,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.CameraActivity"
+            android:name=".activity.CameraActivity"
             android:launchMode="singleTop"
             android:screenOrientation="landscape"
             android:theme="@style/camera_theme">
         </activity>
         <activity
-            android:name=".Activity.ImageLoadActivity"
+            android:name=".activity.ImageLoadActivity"
             android:launchMode="singleTop"
             android:screenOrientation="landscape"
             android:theme="@style/camera_theme">

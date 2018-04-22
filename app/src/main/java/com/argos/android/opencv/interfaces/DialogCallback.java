@@ -3,7 +3,7 @@ package com.argos.android.opencv.Interface;
 import android.support.annotation.DrawableRes;
 
 /**
- * Interfacing {@link com.argos.android.opencv.Adapter.ImageListAdapter} -> {@link com.argos.android.opencv.Activity.MainActivity}
+ * Interfacing {@link com.argos.android.opencv.adapter.ImageListAdapter} -> {@link com.argos.android.opencv.activity.MainActivity}
  */
 
 public interface DialogCallback
