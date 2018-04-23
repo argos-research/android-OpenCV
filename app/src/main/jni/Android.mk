@@ -11,7 +11,7 @@ OPENCV_LIB_TYPE:=SHARED
 include $(OPENCV_SDK)/native/jni/OpenCV.mk
 
 LOCAL_MODULE    := NativeArgOS
-LOCAL_SRC_FILES := com_argos_android_opencv_Driving_AutoDrive.cpp
+LOCAL_SRC_FILES := com_argos_android_opencv_driving_AutoDrive.cpp
 LOCAL_LDLIBS += -llog -ldl -landroid -lGLESv2 -lEGL
 
 include $(BUILD_SHARED_LIBRARY)

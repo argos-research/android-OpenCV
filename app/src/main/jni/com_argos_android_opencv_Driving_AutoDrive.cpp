@@ -1,4 +1,4 @@
-#include "com_argos_android_opencv_Driving_AutoDrive.h"
+#include "com_argos_android_opencv_driving_AutoDrive.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <android/log.h>
@@ -32,7 +32,7 @@ void processImage(Mat);
 void setROI();
 void drawDebugLines(Mat&);
 
-JNIEXPORT jstring JNICALL Java_com_argos_android_opencv_Driving_AutoDrive_drive
+JNIEXPORT jstring JNICALL Java_com_argos_android_opencv_driving_AutoDrive_drive
         (JNIEnv* env, jclass, jlong srcMat)
 {
     Mat& original = *(Mat*) srcMat;
@@ -69,7 +69,7 @@ void drawDebugLines(Mat& original)
     line(original, pts[5], pts[0], Scalar(255, 0, 0), 1, CV_AA);
 }
 
-JNIEXPORT jstring JNICALL Java_com_argos_android_opencv_Driving_AutoDrive_detectVehicle
+JNIEXPORT jstring JNICALL Java_com_argos_android_opencv_driving_AutoDrive_detectVehicle
         (JNIEnv* env, jclass, jstring cascadeFilePath, jlong srcMat)
 {
     Mat& original = *(Mat*) srcMat;

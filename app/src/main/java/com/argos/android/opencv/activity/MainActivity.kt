@@ -19,12 +19,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import com.argos.android.opencv.R
 import com.argos.android.opencv.adapter.FeatureListAdapter
 import com.argos.android.opencv.fragment.ChooseImageDialogFragment
 import com.argos.android.opencv.interfaces.DialogCallback
 import com.argos.android.opencv.interfaces.MainActivityCallback
 import com.argos.android.opencv.model.Feature
-import com.argos.android.opencv.R
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -32,6 +32,7 @@ import java.io.InputStream
 import java.util.*
 
 class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
+
     private var recyclerView: RecyclerView? = null
     private var bottomSheet: BottomSheetDialogFragment? = null
     private var layoutManager: LinearLayoutManager? = null
@@ -91,6 +92,7 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
         features = ArrayList()
         features!!.add(Feature(getString(R.string.feature_lane), R.drawable.lane_detection_thumbnail))
         features!!.add(Feature(getString(R.string.feature_vehicle), R.drawable.vehicle_detection_thumbnail))
+        features!!.add(Feature(getString(R.string.feature_overtaking), R.drawable.vehicle_detection_thumbnail))
 
         layoutManager = LinearLayoutManager(this)
         recyclerView!!.layoutManager = layoutManager
@@ -161,6 +163,6 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
     companion object {
         private const val TAG = "MainActivity"
         private var version: String? = null
-        var CASCADE_FILE_LOADED = true
+        public var CASCADE_FILE_LOADED = true
     }
 }

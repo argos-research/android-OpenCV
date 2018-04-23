@@ -6,8 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.argos.android.opencv.`interface`.DialogCallback
 import com.argos.android.opencv.R
+import com.argos.android.opencv.interfaces.DialogCallback
+
 
 class ImageListAdapter(private val images: IntArray, private val feature: String, context: Context) : RecyclerView.Adapter<ImageListAdapter.ViewHolder>() {
 
