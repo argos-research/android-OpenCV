@@ -7,8 +7,8 @@ import android.view.SurfaceView
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
-import com.argos.android.opencv.driving.AutoDrive
 import com.argos.android.opencv.R
+import com.argos.android.opencv.driving.AutoDrive
 import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.LoaderCallbackInterface
@@ -124,7 +124,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         } else {
             removeDirectionView()
             if (MainActivity.CASCADE_FILE_LOADED)
-                AutoDrive.detectVehicle(cascadeFilePath, srcMat.nativeObjAddr)
+                AutoDrive.detectVehicle(cascadeFilePath!!, srcMat.nativeObjAddr)
             else
                 Toast.makeText(this, "Error: Cascade file not loaded", Toast.LENGTH_SHORT).show()
         }

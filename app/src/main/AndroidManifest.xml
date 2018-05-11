@@ -36,6 +36,12 @@
             android:screenOrientation="landscape"
             android:theme="@style/camera_theme">
         </activity>
+        <activity
+            android:name=".activity.DnnActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="landscape"
+            android:theme="@style/camera_theme">
+        </activity>
     </application>
 
 </manifest>

@@ -147,7 +147,7 @@ public class Dnn {
     // C++:  Net readNetFromTensorflow(String model, String config = String())
     //
 
-    //javadoc: readNetFromTensorflow(model, config)
+    //javadoc: graph.pbtxt(model, config)
     public static Net readNetFromTensorflow(String model, String config)
     {
         
