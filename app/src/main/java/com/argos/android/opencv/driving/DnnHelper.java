@@ -1,81 +1,41 @@
-package com.argos.android.opencv.activity;
+package com.argos.android.opencv.driving;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.argos.android.opencv.R;
-
-import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.dnn.Dnn;
 import org.opencv.dnn.Net;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class DnnActivity extends AppCompatActivity implements CvCameraViewListener2 {
+public class DnnHelper {
 
-    // Initialize OpenCV manager.
-    private BaseLoaderCallback loader =  new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS : {
-                    System.loadLibrary("opencv_java3");
-                    mOpenCvCameraView.enableView();
-                }
+    public DnnHelper(){
 
-                default: {
-                    super.onManagerConnected(status);
-                }
-            }
-        }
-    };
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (OpenCVLoader.initDebug()) {
-            Log.d("DnnActivity", "OpenCV successfully loaded");
-            loader.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-        } else {
-            Log.d("DnnActivity", "OpenCV load failed");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, loader);
-        }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dnn);
-
-        // Set up camera listener.
-        mOpenCvCameraView = findViewById(R.id.CameraView);
-        mOpenCvCameraView.setVisibility(CameraBridgeViewBase.VISIBLE);
-        mOpenCvCameraView.setCvCameraViewListener(this);
-        mOpenCvCameraView.setMaxFrameSize(480,640);
-    }
 
     // Load a network.
-    public void onCameraViewStarted(int width, int height) {
-        String config = getPath("ssd_mobilenet_v1_coco_2017_11_17.pbtxt", this);
-        String model = getPath("frozen_inference_graph.pb", this);
-       // net = Dnn.readNetFromTensorflow(model, config);
+    public void onCameraViewStarted(int width, int height, Context context) {
+        String config = getPath("ssd_mobilenet_v1_coco_2017_11_17.pbtxt", context);
+        String model = getPath("frozen_inference_graph.pb", context);
+        net = Dnn.readNetFromTensorflow(model, config);
         Log.i(TAG, "Network loaded successfully");
     }
 
-    public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-        /*final int IN_WIDTH = 300;
+    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        final int IN_WIDTH = 300;
         final int IN_HEIGHT = 300;
         final float WH_RATIO = (float)IN_WIDTH / IN_HEIGHT;
         final double IN_SCALE_FACTOR = 0.007843;
@@ -92,6 +52,8 @@ public class DnnActivity extends AppCompatActivity implements CvCameraViewListen
                 new Scalar(MEAN_VAL, MEAN_VAL, MEAN_VAL), false,true);
         net.setInput(blob);
         Mat detections = net.forward();
+
+        blob.release();
 
         int cols = frame.cols();
         int rows = frame.rows();
@@ -128,7 +90,7 @@ public class DnnActivity extends AppCompatActivity implements CvCameraViewListen
                 Imgproc.rectangle(subFrame, new Point(xLeftBottom, yLeftBottom),
                         new Point(xRightTop, yRightTop),
                         new Scalar(0, 255, 0));
-               // String label = classNames[classId] + ": " + confidence;
+                // String label = classNames[classId] + ": " + confidence;
                 String label = "classid: " + classId + " confidence: " + confidence;
 
                 int[] baseLine = new int[1];
@@ -144,14 +106,9 @@ public class DnnActivity extends AppCompatActivity implements CvCameraViewListen
                         Core.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 0, 0));
             }
         }
-        System.gc();
+        subFrame.release();
         return frame;
-        */
-        System.gc();
-        return inputFrame.rgba();
     }
-
-    public void onCameraViewStopped() {}
 
     // Upload file to storage and return a path.
     private static String getPath(String file, Context context) {
@@ -178,14 +135,8 @@ public class DnnActivity extends AppCompatActivity implements CvCameraViewListen
         return "";
     }
 
-    private static final String TAG = "OpenCV/Sample/MobileNet";
-    private static final String[] classNames = {"background",
-            "aeroplane", "bicycle", "bird", "boat",
-            "bottle", "bus", "car", "cat", "chair",
-            "cow", "diningtable", "dog", "horse",
-            "motorbike", "person", "pottedplant",
-            "sheep", "sofa", "train", "tvmonitor"};
 
+    private static final String TAG = "OpenCV/MobileNet";
     private Net net;
-    private CameraBridgeViewBase mOpenCvCameraView;
+
 }

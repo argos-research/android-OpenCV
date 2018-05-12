@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.argos.android.opencv.R
 import com.argos.android.opencv.driving.AutoDrive
+import com.argos.android.opencv.driving.DnnHelper
 import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.LoaderCallbackInterface
@@ -35,6 +36,8 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     private var feature: String? = null
     private var cascadeFilePath: String? = null
+
+    private var dnnHelper: DnnHelper = DnnHelper()
 
     private val loader = object : BaseLoaderCallback(this) {
         override fun onManagerConnected(status: Int) {
@@ -110,6 +113,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     override fun onCameraViewStarted(width: Int, height: Int) {
         cameraView!!.enableFpsMeter()
+        dnnHelper.onCameraViewStarted(width,height,this)
     }
 
     override fun onCameraViewStopped() {
@@ -119,17 +123,20 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
         val srcMat = inputFrame.rgba()
 
-        if (feature == getString(R.string.feature_lane)) {
-            changeDirection(AutoDrive.drive(srcMat.nativeObjAddr))
-        } else {
-            removeDirectionView()
-            if (MainActivity.CASCADE_FILE_LOADED)
-                AutoDrive.detectVehicle(cascadeFilePath!!, srcMat.nativeObjAddr)
-            else
-                Toast.makeText(this, "Error: Cascade file not loaded", Toast.LENGTH_SHORT).show()
+        when(feature){
+            getString(R.string.feature_lane) -> changeDirection(AutoDrive.drive(srcMat.nativeObjAddr))
+            getString(R.string.feature_vehicle)-> findVehicle(srcMat)
+            getString(R.string.feature_overtaking) -> return dnnHelper.onCameraFrame(inputFrame)
         }
-
         return srcMat
+    }
+
+    private fun findVehicle(srcMat:Mat){
+        removeDirectionView()
+        if (MainActivity.CASCADE_FILE_LOADED)
+            AutoDrive.detectVehicle(cascadeFilePath!!, srcMat.nativeObjAddr)
+        else
+            Toast.makeText(this, "Error: Cascade file not loaded", Toast.LENGTH_SHORT).show()
     }
 
     private fun changeDirection(direction: String) {

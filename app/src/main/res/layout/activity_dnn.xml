@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.argos.android.opencv.activity.DnnActivity">
 
-    <org.opencv.android.JavaCameraView
+    <org.opencv.android.JavaCamera2View
         android:id="@+id/CameraView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

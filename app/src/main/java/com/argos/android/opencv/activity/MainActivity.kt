@@ -147,17 +147,18 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
 
     override fun launchCameraDetection(feature: Feature) {
 
-        val intent = Intent(this@MainActivity, DnnActivity::class.java)
-        startActivity(intent)
+      //  val intent = Intent(this@MainActivity, DnnActivity::class.java)
+       // startActivity(intent)
 
-       /* val intent = Intent(this@MainActivity, CameraActivity::class.java)
+        val intent = Intent(this@MainActivity, CameraActivity::class.java)
         intent.putExtra("cascadeFilePath", cascadeFile!!.absolutePath)
         intent.putExtra("feature", feature.featureName)
         startActivity(intent)
-        */
+
     }
 
     override fun launchImageDetection(feature: String, @DrawableRes image: Int) {
+        System.gc()
         val intent = Intent(this@MainActivity, ImageLoadActivity::class.java)
         intent.putExtra("cascadeFilePath", cascadeFile!!.absolutePath)
         intent.putExtra("feature", feature)
