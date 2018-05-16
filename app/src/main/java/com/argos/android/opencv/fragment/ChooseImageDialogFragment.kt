@@ -5,8 +5,8 @@ import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import com.argos.android.opencv.adapter.ImageListAdapter
 import com.argos.android.opencv.R
+import com.argos.android.opencv.adapter.ImageListAdapter
 
 /**
  * BottomSheet for choosing image. Refer [com.argos.android.opencv.activity.ImageLoadActivity]
@@ -16,7 +16,7 @@ import com.argos.android.opencv.R
 class ChooseImageDialogFragment : BottomSheetDialogFragment() {
     private var recyclerView: RecyclerView? = null
     private var imageListAdapter: ImageListAdapter? = null
-    private val images = intArrayOf(R.drawable.scene_1, R.drawable.scene_2)
+    private val images = intArrayOf(R.drawable.scene_1, R.drawable.scene_2,R.drawable.watch)
 
     override fun setupDialog(dialog: Dialog, style: Int) {
         val contentView = View.inflate(context, R.layout.choose_image, null)

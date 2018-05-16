@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.argos.android.opencv.R
 import com.argos.android.opencv.driving.AutoDrive
+import com.argos.android.opencv.driving.DnnHelper
 import org.opencv.android.Utils
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
@@ -30,6 +31,8 @@ class ImageLoadActivity : AppCompatActivity() {
     private var feature: String? = null
     private var cascadeFilePath: String? = null
 
+    private var dnnHelper: DnnHelper = DnnHelper()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +54,8 @@ class ImageLoadActivity : AppCompatActivity() {
         imageRes = intent.extras!!.getInt("image")
         feature = intent.extras!!.getString("feature")
         cascadeFilePath = intent.extras!!.getString("cascadeFilePath")
+        dnnHelper.onCameraViewStarted(this)
+
     }
 
     fun initView() {
@@ -66,14 +71,17 @@ class ImageLoadActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
-        if (feature == getString(R.string.feature_lane)) {
-            AutoDrive.drive(image!!.nativeObjAddr)
-        } else {
-            if (MainActivity.CASCADE_FILE_LOADED)
-                AutoDrive.detectVehicle(cascadeFilePath!!, image!!.nativeObjAddr)
-            else
-                Toast.makeText(this, "Error: Cascade file not loaded", Toast.LENGTH_SHORT).show()
+        when (feature) {
+            getString(R.string.feature_lane) -> AutoDrive.drive(image!!.nativeObjAddr)
+            getString(R.string.feature_vehicle) -> {
+                if (MainActivity.CASCADE_FILE_LOADED)
+                    AutoDrive.detectVehicle(cascadeFilePath!!, image!!.nativeObjAddr)
+                else
+                    Toast.makeText(this, "Error: Cascade file not loaded", Toast.LENGTH_SHORT).show()
+            }
+             getString(R.string.feature_overtaking) -> image = dnnHelper.processMat(image!!)
         }
+
     }
 
     fun setImage() {

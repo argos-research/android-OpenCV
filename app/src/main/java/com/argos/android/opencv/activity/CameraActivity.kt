@@ -113,7 +113,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     override fun onCameraViewStarted(width: Int, height: Int) {
         cameraView!!.enableFpsMeter()
-        dnnHelper.onCameraViewStarted(width,height,this)
+        dnnHelper.onCameraViewStarted(this)
     }
 
     override fun onCameraViewStopped() {
@@ -123,15 +123,15 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
         val srcMat = inputFrame.rgba()
 
-        when(feature){
+        when (feature) {
             getString(R.string.feature_lane) -> changeDirection(AutoDrive.drive(srcMat.nativeObjAddr))
-            getString(R.string.feature_vehicle)-> findVehicle(srcMat)
-            getString(R.string.feature_overtaking) -> return dnnHelper.onCameraFrame(inputFrame)
+            getString(R.string.feature_vehicle) -> findVehicle(srcMat)
+            getString(R.string.feature_overtaking) -> {removeDirectionView(); return dnnHelper.onCameraFrame(inputFrame)}
         }
         return srcMat
     }
 
-    private fun findVehicle(srcMat:Mat){
+    private fun findVehicle(srcMat: Mat) {
         removeDirectionView()
         if (MainActivity.CASCADE_FILE_LOADED)
             AutoDrive.detectVehicle(cascadeFilePath!!, srcMat.nativeObjAddr)
@@ -143,9 +143,15 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         runOnUiThread {
             directionView!!.visibility = View.VISIBLE
             when (direction) {
-                "S" -> { directionView!!.setImageResource((directionDrawable[0])) }
-                "L" -> { directionView!!.setImageResource((directionDrawable[1])) }
-                "R" -> { directionView!!.setImageResource((directionDrawable[2])) }
+                "S" -> {
+                    directionView!!.setImageResource((directionDrawable[0]))
+                }
+                "L" -> {
+                    directionView!!.setImageResource((directionDrawable[1]))
+                }
+                "R" -> {
+                    directionView!!.setImageResource((directionDrawable[2]))
+                }
             }
         }
     }
