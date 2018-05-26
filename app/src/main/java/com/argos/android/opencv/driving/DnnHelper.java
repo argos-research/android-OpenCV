@@ -27,8 +27,8 @@ public class DnnHelper {
 
     // Load a network.
     public void onCameraViewStarted(Context context) {
-        String config = getPath("ssd_mobilenet_v1_coco_2017_11_17.pbtxt", context);
-        String model = getPath("frozen_inference_graph.pb", context);
+        String config = getPath("opt_graph.pbtxt", context);
+        String model = getPath("opt_graph.pb", context);
         net = Dnn.readNetFromTensorflow(model, config);
         Log.i(TAG, "Network loaded successfully");
     }
