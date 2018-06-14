@@ -3,6 +3,7 @@
     <string name="feature_lane">Lane Detection</string>
     <string name="feature_vehicle">Vehicle Detection</string>
     <string name="feature_overtaking">Autonomous Overtaking</string>
+    <string name="feature_lane_detection">Lane Detection (2)</string>
 
     <string name="title_choose_image">Choose image</string>
     <string name="dialog_title_about">About</string>
