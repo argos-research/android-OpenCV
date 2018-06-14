@@ -94,7 +94,8 @@ public class DnnHelper {
                         new Point(xRightTop, yRightTop),
                         new Scalar(0, 255, 0));
                 // String label = classNames[classId] + ": " + confidence;
-                String label = "classid: " + classId + " confidence: " + confidence;
+                confidence = (double)((int)(confidence*10000))/100;
+                String label = "classid: " + classId + " confidence: " + confidence+"%";
 
                 int[] baseLine = new int[1];
                 Size labelSize = Imgproc.getTextSize(label, Core.FONT_HERSHEY_SIMPLEX, 0.5, 1, baseLine);

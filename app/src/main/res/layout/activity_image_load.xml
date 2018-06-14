@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_image_load"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <com.argos.android.opencv.util.SquareImageView
+        android:id="@+id/image_view"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:src="@drawable/scene_1"
-        android:id="@+id/image_view"/>
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/scene_1" />
 
-</FrameLayout>
+</RelativeLayout>

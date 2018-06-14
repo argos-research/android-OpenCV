@@ -1,5 +1,6 @@
 package com.argos.android.opencv.activity
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -10,11 +11,11 @@ import android.widget.Toast
 import com.argos.android.opencv.R
 import com.argos.android.opencv.driving.AutoDrive
 import com.argos.android.opencv.driving.DnnHelper
-import org.opencv.android.BaseLoaderCallback
-import org.opencv.android.CameraBridgeViewBase
-import org.opencv.android.LoaderCallbackInterface
-import org.opencv.android.OpenCVLoader
+import kotlinx.android.synthetic.main.activity_camera.*
+import org.opencv.android.*
+import org.opencv.core.Core
 import org.opencv.core.Mat
+import java.text.DecimalFormat
 
 /**
  * Activity to run the OpenCV algorithm on Camera
@@ -22,6 +23,7 @@ import org.opencv.core.Mat
 
 class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListener2 {
     private var decorView: View? = null
+
     private var cameraView: CameraBridgeViewBase? = null
     private var directionView: ImageView? = null
     private val directionDrawable = intArrayOf(R.drawable.straight, R.drawable.left, R.drawable.right)
@@ -38,6 +40,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     private var cascadeFilePath: String? = null
 
     private var dnnHelper: DnnHelper = DnnHelper()
+
 
     private val loader = object : BaseLoaderCallback(this) {
         override fun onManagerConnected(status: Int) {
@@ -76,7 +79,8 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         cameraView = findViewById(R.id.opencv_cameraview)
         cameraView!!.visibility = SurfaceView.VISIBLE
-        //cameraView!!.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT)
+
+        cameraView!!.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         directionView = findViewById(R.id.imageview_direction)
     }
@@ -121,13 +125,15 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     }
 
     override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
-        val srcMat = inputFrame.rgba()
+        var srcMat = inputFrame.rgba()
 
         when (feature) {
             getString(R.string.feature_lane) -> changeDirection(AutoDrive.drive(srcMat.nativeObjAddr))
             getString(R.string.feature_vehicle) -> findVehicle(srcMat)
-            getString(R.string.feature_overtaking) -> {removeDirectionView(); return dnnHelper.onCameraFrame(inputFrame)}
+            getString(R.string.feature_overtaking) -> {removeDirectionView(); srcMat = dnnHelper.onCameraFrame(inputFrame)}
         }
+
+        setImage(srcMat)
         return srcMat
     }
 
@@ -159,6 +165,59 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     private fun removeDirectionView() {
         runOnUiThread { directionView!!.visibility = View.INVISIBLE }
     }
+
+    fun setImage(image:Mat?) {
+        /**
+         * OpenCV uses BGR as its default colour order for image
+         * See https://stackoverflow.com/questions/39316447/opencv-giving-wrong-color-to-colored-images-on-loading
+         */
+       // Imgproc.cvtColor(image!!, image!!, Imgproc.COLOR_BGR2RGB)
+        val bitmap = Bitmap.createBitmap(image!!.width(), image!!.height(), Bitmap.Config.ARGB_8888)
+        Utils.matToBitmap(image, bitmap)
+
+        runOnUiThread {
+            image_view!!.setImageBitmap(bitmap)
+            measure()
+            txtFps.text = mStrfps
+        }
+
+    }
+
+
+    private var mFramesCouner: Int = 0
+    private var mFrequency: Double = 0.toDouble()
+    private var mprevFrameTime: Long = 0
+    private var mStrfps: String? = null
+    internal var mIsInitialized = false
+    private val FPS_FORMAT = DecimalFormat("0.00")
+    private val STEP = 20
+
+
+    fun init() {
+        mFramesCouner = 0
+        mFrequency = Core.getTickFrequency()
+        mprevFrameTime = Core.getTickCount()
+        mStrfps = ""
+
+    }
+
+    fun measure() {
+        if (!mIsInitialized) {
+            init()
+            mIsInitialized = true
+        } else {
+            mFramesCouner++
+            if (mFramesCouner % STEP == 0) {
+                val time = Core.getTickCount()
+                val fps = STEP * mFrequency / (time - mprevFrameTime)
+                mprevFrameTime = time
+
+                mStrfps = FPS_FORMAT.format(fps) + " FPS"
+                Log.i(TAG, mStrfps)
+            }
+        }
+    }
+
 
     companion object {
         private const val TAG = "CameraActivity"
