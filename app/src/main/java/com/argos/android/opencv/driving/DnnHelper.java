@@ -95,7 +95,7 @@ public class DnnHelper {
                         new Scalar(0, 255, 0));
                 // String label = classNames[classId] + ": " + confidence;
                 confidence = (double)((int)(confidence*10000))/100;
-                String label = "classid: " + classId + " confidence: " + confidence+"%";
+                String label =  getNameForClass(classId) + " " + confidence+"%";
 
                 int[] baseLine = new int[1];
                 Size labelSize = Imgproc.getTextSize(label, Core.FONT_HERSHEY_SIMPLEX, 0.5, 1, baseLine);
@@ -112,6 +112,28 @@ public class DnnHelper {
         }
         subFrame.release();
         return frame;
+    }
+
+    private String getNameForClass(int classId) {
+        switch(classId){
+            case 1:{
+                return "Lynx220";
+            }
+            case 2:{
+                return "Cavallo360";
+            }
+            case 3:{
+                return "Spirit300";
+            }
+            case 4:{
+                return "FMC_GT4";
+            }
+            case 5:{
+                return "Boxer96";
+            }
+        }
+
+        return "Unknown";
     }
 
 
