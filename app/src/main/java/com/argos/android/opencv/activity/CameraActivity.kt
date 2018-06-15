@@ -11,6 +11,7 @@ import android.widget.Toast
 import com.argos.android.opencv.R
 import com.argos.android.opencv.driving.AutoDrive
 import com.argos.android.opencv.driving.DnnHelper
+import com.argos.android.opencv.model.DnnRespone
 import kotlinx.android.synthetic.main.activity_camera.*
 import org.opencv.android.*
 import org.opencv.core.Core
@@ -83,6 +84,14 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         cameraView!!.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         directionView = findViewById(R.id.imageview_direction)
+
+        when (feature) {
+            getString(R.string.feature_lane), getString(R.string.feature_vehicle) -> {
+                blackBackground.visibility = View.GONE
+                image_view.visibility = View.GONE
+            }
+            getString(R.string.feature_overtaking) -> {}
+        }
     }
 
     private fun initListener() {
@@ -126,14 +135,21 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
         var srcMat = inputFrame.rgba()
+        val dnnResponse : DnnRespone?
 
         when (feature) {
             getString(R.string.feature_lane) -> changeDirection(AutoDrive.drive(srcMat.nativeObjAddr))
             getString(R.string.feature_vehicle) -> findVehicle(srcMat)
-            getString(R.string.feature_overtaking) -> {removeDirectionView(); srcMat = dnnHelper.onCameraFrame(inputFrame).mat}
-        }
+            getString(R.string.feature_overtaking) -> {
 
-        setImage(srcMat)
+                removeDirectionView()
+                dnnResponse = dnnHelper.onCameraFrame(inputFrame)
+                srcMat = dnnResponse.mat
+                setImage(srcMat)
+                setDistance(dnnResponse.distance)
+            }
+        }
+        setFps()
         return srcMat
     }
 
@@ -177,21 +193,35 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
         runOnUiThread {
             image_view!!.setImageBitmap(bitmap)
-            measure()
-            txtFps.text = mStrfps
         }
 
     }
 
+    private fun setDistance(distance: Double) {
+        runOnUiThread {
+            if(distance < 0.5)
+                txtDistance.text = "-"
+            else
+                txtDistance.text = ""+distance + "m"
+        }
+    }
+
+    // FPS counter CODE
+
+    fun setFps(){
+        runOnUiThread {
+            measure()
+            txtFps.text = mStrfps
+        }
+    }
 
     private var mFramesCouner: Int = 0
     private var mFrequency: Double = 0.toDouble()
     private var mprevFrameTime: Long = 0
     private var mStrfps: String? = null
-    internal var mIsInitialized = false
+    private var mIsInitialized = false
     private val FPS_FORMAT = DecimalFormat("0.00")
     private val STEP = 20
-
 
     fun init() {
         mFramesCouner = 0
@@ -217,7 +247,6 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
             }
         }
     }
-
 
     companion object {
         private const val TAG = "CameraActivity"
