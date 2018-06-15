@@ -130,7 +130,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         when (feature) {
             getString(R.string.feature_lane) -> changeDirection(AutoDrive.drive(srcMat.nativeObjAddr))
             getString(R.string.feature_vehicle) -> findVehicle(srcMat)
-            getString(R.string.feature_overtaking) -> {removeDirectionView(); srcMat = dnnHelper.onCameraFrame(inputFrame)}
+            getString(R.string.feature_overtaking) -> {removeDirectionView(); srcMat = dnnHelper.onCameraFrame(inputFrame).mat}
         }
 
         setImage(srcMat)

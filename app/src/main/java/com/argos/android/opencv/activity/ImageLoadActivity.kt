@@ -79,7 +79,7 @@ class ImageLoadActivity : AppCompatActivity() {
                 else
                     Toast.makeText(this, "Error: Cascade file not loaded", Toast.LENGTH_SHORT).show()
             }
-             getString(R.string.feature_overtaking) -> image = dnnHelper.processMat(image!!)
+             getString(R.string.feature_overtaking) -> image = dnnHelper.processMat(image!!).mat
         }
 
     }
