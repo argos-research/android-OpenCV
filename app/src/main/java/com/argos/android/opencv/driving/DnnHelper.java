@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
+import com.argos.android.opencv.model.DnnRespone;
+
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -21,6 +23,8 @@ import java.io.IOException;
 
 public class DnnHelper {
 
+    double distance;
+
     public DnnHelper() {
 
     }
@@ -33,11 +37,11 @@ public class DnnHelper {
         Log.i(TAG, "Network loaded successfully");
     }
 
-    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+    public DnnRespone onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         return processMat(inputFrame.rgba());
     }
 
-    public Mat processMat(Mat frame) {
+    public DnnRespone processMat(Mat frame) {
 
         final int IN_WIDTH = 300;
         final int IN_HEIGHT = 300;
@@ -111,7 +115,7 @@ public class DnnHelper {
             }
         }
         subFrame.release();
-        return frame;
+        return new DnnRespone(frame,distance);
     }
 
     private String getNameForClass(int classId) {
