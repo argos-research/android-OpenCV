@@ -28,6 +28,14 @@ class Window(x: Int, width: Int, y: Int, height: Int) {
         return mX
     }
 
+    fun increaseX() {
+        setX(mX + 1)
+    }
+
+    fun decreaseX() {
+        setX(mX - 1)
+    }
+
     fun setY(y: Int) {
         if (y < 0)
             throw WindowException("'y' cannot be negative")
@@ -36,6 +44,14 @@ class Window(x: Int, width: Int, y: Int, height: Int) {
 
     fun getY(): Int {
         return mY
+    }
+
+    fun increaseY() {
+        setY(mY + 1)
+    }
+
+    fun decreaseY() {
+        setY(mY - 1)
     }
 
     fun setWidth(width: Int) {
@@ -48,6 +64,14 @@ class Window(x: Int, width: Int, y: Int, height: Int) {
         return mWidth
     }
 
+    fun increaseWidth() {
+        setWidth(mWidth+1)
+    }
+
+    fun decreaseWidth() {
+        setWidth(mWidth-1)
+    }
+
     fun setHeight(height: Int) {
         if (height <= 0)
             throw WindowException("'height' must be greater 0")
@@ -56,6 +80,14 @@ class Window(x: Int, width: Int, y: Int, height: Int) {
 
     fun getHeight(): Int {
         return mHeight
+    }
+
+    fun increaseHeight() {
+        setHeight(mHeight+1)
+    }
+
+    fun decreaseHeight() {
+        setHeight(mHeight-1)
     }
 
     fun getMidpoint(): Point {
@@ -76,5 +108,29 @@ class Window(x: Int, width: Int, y: Int, height: Int) {
 
     private fun getMidpointYDouble(): Double {
         return mY + (mHeight.toDouble()/2)
+    }
+
+    fun getBorderRight(): Int {
+        return mX + mWidth - 1
+    }
+
+    fun getBorderBelow(): Int {
+        return mY + mHeight - 1
+    }
+
+    fun equals(other: Window): Boolean {
+        if (other.getX() != mX)
+            return false
+        if (other.getY() != mY)
+            return false
+        if (other.getWidth() != mWidth)
+            return false
+        if (other.getHeight() != mHeight)
+            return false
+        return true
+    }
+
+    override fun toString(): String {
+        return "x: $mX, width: $mWidth, y: $mY, height: $mHeight"
     }
 }

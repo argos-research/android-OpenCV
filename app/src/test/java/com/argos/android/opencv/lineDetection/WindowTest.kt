@@ -31,6 +31,22 @@ class WindowTest {
     }
 
     @Test
+    fun testIncreaseX() {
+        val window = Window(2, 1, 1, 1)
+        window.increaseX()
+
+        assertEquals(3, window.getX())
+    }
+
+    @Test
+    fun testDecreaseX() {
+        val window = Window(3, 1, 1, 1)
+        window.decreaseX()
+
+        assertEquals(2, window.getX())
+    }
+
+    @Test
     fun testSetY() {
         val window = Window(1, 1, 1, 1)
         window.setY(3)
@@ -42,6 +58,22 @@ class WindowTest {
     fun testSetYNegative() {
         val window = Window(1, 1, 1, 1)
         window.setY(-1)
+    }
+
+    @Test
+    fun testIncreaseY() {
+        val window = Window(1, 1, 2, 1)
+        window.increaseY()
+
+        assertEquals(3, window.getY())
+    }
+
+    @Test
+    fun testDecreaseY() {
+        val window = Window(1, 1, 3, 1)
+        window.decreaseY()
+
+        assertEquals(2, window.getY())
     }
 
     @Test
@@ -64,6 +96,22 @@ class WindowTest {
         window.setWidth(-1)
     }
 
+    @Test
+    fun testIncreaseWidth() {
+        val window = Window(1, 2, 1, 1)
+        window.increaseWidth()
+
+        assertEquals(3, window.getWidth())
+    }
+
+    @Test
+    fun testDecreaseWidth() {
+        val window = Window(1, 3, 1, 1)
+        window.decreaseWidth()
+
+        assertEquals(2, window.getWidth())
+    }
+
     @Test(expected = WindowException::class)
     fun testSetHeightZero() {
         val window = Window(1, 1, 1, 1)
@@ -74,6 +122,22 @@ class WindowTest {
     fun testSetHeightNegative() {
         val window = Window(1, 1, 1, 1)
         window.setHeight(-1)
+    }
+
+    @Test
+    fun testIncreaseHeight() {
+        val window = Window(1, 1, 1, 2)
+        window.increaseHeight()
+
+        assertEquals(3, window.getHeight())
+    }
+
+    @Test
+    fun testDecreaseHeight() {
+        val window = Window(1, 1, 1, 3)
+        window.decreaseHeight()
+
+        assertEquals(2, window.getHeight())
     }
 
     @Test
@@ -92,5 +156,30 @@ class WindowTest {
     fun testGetMidpointY() {
         val window = Window(2, 4, 1, 3)
         assertEquals(2, window.getMidpointY())
+    }
+
+    @Test
+    fun testGetBorderRight() {
+        val window = Window(2, 2, 1, 1)
+        assertEquals(3, window.getBorderRight())
+    }
+
+    @Test
+    fun testGetBorderBelow() {
+        val window = Window(2, 2, 3, 3)
+        assertEquals(5, window.getBorderBelow())
+    }
+
+    @Test
+    fun testEqual() {
+        assertTrue(Window(2, 4, 1, 3).equals(Window(2, 4, 1, 3)))
+        assertFalse(Window(2, 4, 1, 3).equals(Window(2, 4, 1, 2)))
+    }
+
+    @Test
+    fun testToString() {
+        val window = Window(1, 2, 3, 4)
+
+        assertEquals("x: 1, width: 2, y: 3, height: 4", window.toString())
     }
 }
