@@ -1,4 +1,4 @@
-package com.argos.android.opencv.lineDetection
+package com.argos.android.opencv.lineDetection.windowFinding
 
 import org.junit.Test
 import org.junit.Assert.*
@@ -29,6 +29,50 @@ class WindowOptimizerTest {
     }
 
     @Test
+    fun testMaximizeWindowWidthBorderConditionsLeft() {
+        val image = invertTwoDimensionalArray(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
+
+        val windowActual = Window(2,2, 2, 3)
+        windowOptimizer.maximizeWindowWidth(windowActual)
+
+        val windowExpected = Window(0, 4, 2, 3)
+
+        assertTrue(windowExpected.equals(windowActual))
+    }
+
+    @Test
+    fun testMaximizeWindowWidthBorderConditionsRight() {
+        val image = invertTwoDimensionalArray(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
+
+        val windowActual = Window(7,2, 2, 3)
+        windowOptimizer.maximizeWindowWidth(windowActual)
+
+        val windowExpected = Window(7, 4, 2, 3)
+
+        assertTrue(windowExpected.equals(windowActual))
+    }
+
+    @Test
     fun testMaximizeWindowWidthEnlargeLeft() {
         val pixels = createTwoDimensionalArray(10, 6)
         val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(2, 3, 4, 6, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
@@ -51,6 +95,28 @@ class WindowOptimizerTest {
     }
 
     @Test
+    fun testMaximizeWindowWidthEnlargeLeftBorderConditions() {
+        val image = invertTwoDimensionalArray(arrayOf(
+            //         0  1  2  3  4  5  6  7  8  9  0
+            intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+            intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+            intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+            intArrayOf(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+            intArrayOf(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+            intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+            intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
+
+        val windowActual = Window(2,2, 2, 3)
+        windowOptimizer.maximizeWindowWidthEnlargeLeft(windowActual)
+
+        val windowExpected = Window(0, 4, 2, 3)
+
+        assertTrue(windowExpected.equals(windowActual))
+    }
+
+    @Test
     fun testMaximizeWindowWidthEnlargeRight() {
         val pixels = createTwoDimensionalArray(10, 6)
         val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(2, 3, 4, 6, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
@@ -68,8 +134,28 @@ class WindowOptimizerTest {
 
         val windowActual = Window(0, 9, 4, 2)
         windowOptimizer.maximizeWindowWidthEnlargeRight(windowActual)
+    }
 
-        assertTrue(Window(1, 2, 2, 2).equals(windowActual))
+    @Test
+    fun testMaximizeWindowWidthEnlargeRightBorderConditions() {
+        val image = invertTwoDimensionalArray(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
+
+        val windowActual = Window(7,2, 2, 3)
+        windowOptimizer.maximizeWindowWidthEnlargeRight(windowActual)
+
+        val windowExpected = Window(7, 4, 2, 3)
+
+        assertTrue(windowExpected.equals(windowActual))
     }
 
     @Test
@@ -237,5 +323,13 @@ class WindowOptimizerTest {
             pixels[row[i]][col[i]] = 1
         }
         return pixels
+    }
+
+    private fun invertTwoDimensionalArray(array: Array<IntArray>): Array<IntArray> {
+        val invArray = Array(array[0].size) { IntArray(array.size) }
+        for (x in 0..array[0].lastIndex)
+            for (y in 0..array.lastIndex)
+                invArray[x][y] = array[y][x]
+        return invArray
     }
 }

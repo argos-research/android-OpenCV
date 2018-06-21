@@ -1,5 +1,7 @@
-package com.argos.android.opencv.lineDetection
+package com.argos.android.opencv.lineDetection.windowFinding
 
+import com.argos.android.opencv.lineDetection.windowFinding.Window
+import com.argos.android.opencv.lineDetection.windowFinding.WindowException
 import org.junit.Test
 import org.junit.Assert.*
 import org.opencv.core.Point
@@ -78,7 +80,7 @@ class WindowTest {
 
     @Test
     fun testSetWidth() {
-        val window = Window(1, 1, 1,1)
+        val window = Window(1, 1, 1, 1)
         window.setWidth(3)
 
         assertEquals(3, window.getWidth())
@@ -168,6 +170,32 @@ class WindowTest {
     fun testGetBorderBelow() {
         val window = Window(2, 2, 3, 3)
         assertEquals(5, window.getBorderBelow())
+    }
+
+
+    @Test
+    fun testSplitWindowInHeightEven() {
+        val window = Window(0, 2, 0, 10)
+
+        val expectedUpperWindow = Window(0, 2, 0, 5)
+        val expectedLowerWindow = Window(0, 2, 5, 5)
+        val (actualUpperWindow, actualLowerWindow) = window.splitWindowInHeight()
+
+        assertTrue(expectedUpperWindow.equals(actualUpperWindow))
+        assertTrue(expectedLowerWindow.equals(actualLowerWindow))
+    }
+
+    @Test
+    fun testSplitWindowInHeightOdd() {
+        val window = Window(0, 2, 0, 11)
+
+        val expectedUpperWindow = Window(0, 2, 0, 5)
+        val expectedLowerWindow = Window(0, 2, 5, 6
+        )
+        val (actualUpperWindow, actualLowerWindow) = window.splitWindowInHeight()
+
+        assertTrue(expectedUpperWindow.equals(actualUpperWindow))
+        assertTrue(expectedLowerWindow.equals(actualLowerWindow))
     }
 
     @Test

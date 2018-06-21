@@ -1,4 +1,4 @@
-package com.argos.android.opencv.lineDetection
+package com.argos.android.opencv.lineDetection.windowFinding
 
 import org.opencv.core.Point
 
@@ -116,6 +116,12 @@ class Window(x: Int, width: Int, y: Int, height: Int) {
 
     fun getBorderBelow(): Int {
         return mY + mHeight - 1
+    }
+
+    fun splitWindowInHeight(): Pair<Window, Window> {
+        val upperWindow = Window(mX, mWidth, mY, Math.floor(mHeight/2.0).toInt())
+        val lowerWindow = Window(mX, mWidth, upperWindow.getBorderBelow() + 1, Math.ceil(mHeight/2.0).toInt())
+        return Pair(upperWindow, lowerWindow)
     }
 
     fun equals(other: Window): Boolean {

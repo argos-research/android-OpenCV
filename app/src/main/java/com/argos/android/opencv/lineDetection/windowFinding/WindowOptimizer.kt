@@ -1,4 +1,4 @@
-package com.argos.android.opencv.lineDetection
+package com.argos.android.opencv.lineDetection.windowFinding
 
 
 class WindowOptimizer(var mPixel: Array<IntArray>) {
@@ -13,25 +13,27 @@ class WindowOptimizer(var mPixel: Array<IntArray>) {
         if (numberPixel == 0)
             throw NoWindowFoundException("There aren't any Pixel in Window")
 
-        do{
+        while (window.getX() > 0){
             val numberPixelDecreasedWindow = numberPixel + countPixelInColumn(window.getX() - 1, window.getY(), window.getBorderBelow())
             if (numberPixel < numberPixelDecreasedWindow) {
                 window.increaseWidth()
                 window.decreaseX()
-            }
-        } while (numberPixel < numberPixelDecreasedWindow)
+            }else
+                break
+        }
     }
 
     fun maximizeWindowWidthEnlargeRight(window: Window) {
         val numberPixel = countPixelInWindow(window)
         if (numberPixel == 0)
             throw NoWindowFoundException("There aren't any Pixel in Window")
-
-        do{
+        while (window.getBorderRight() < mPixel.lastIndex){
             val numberPixelDecreasedWindow = numberPixel + countPixelInColumn(window.getBorderRight() + 1, window.getY(), window.getBorderBelow())
             if (numberPixel < numberPixelDecreasedWindow)
                 window.increaseWidth()
-        } while (numberPixel < numberPixelDecreasedWindow)
+            else
+                break
+        }
     }
 
     fun minimizeWindowWidth(window: Window) {
@@ -100,7 +102,7 @@ class WindowOptimizer(var mPixel: Array<IntArray>) {
     fun countPixelInWindow(window: Window): Int {
         var numberPixel = 0
         for (x in window.getX()..(window.getX() + window.getWidth() - 1))
-            numberPixel += countPixelInColumn(x, window.getY(), window.getY() + window.getHeight() - 1)
+            numberPixel += countPixelInColumn(x, window.getY(), window.getBorderBelow())
         return numberPixel
     }
 
