@@ -26,12 +26,6 @@ class WindowTest {
         assertEquals(3, window.getX())
     }
 
-    @Test(expected = WindowException::class)
-    fun testSetXNegative() {
-        val window = Window(1, 1, 1, 1)
-        window.setX(-1)
-    }
-
     @Test
     fun testIncreaseX() {
         val window = Window(2, 1, 1, 1)
@@ -54,12 +48,6 @@ class WindowTest {
         window.setY(3)
 
         assertEquals(3, window.getY())
-    }
-
-    @Test(expected = WindowException::class)
-    fun testSetYNegative() {
-        val window = Window(1, 1, 1, 1)
-        window.setY(-1)
     }
 
     @Test

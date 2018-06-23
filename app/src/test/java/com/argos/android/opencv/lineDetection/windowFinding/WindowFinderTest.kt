@@ -97,22 +97,130 @@ class WindowFinderTest {
 
     @Test
     fun testSecondWindowIsPlacedRightIfOnlyOneStartWindowIsFound() {
-        throw NotImplementedError()
+        val image = invertTwoDimensionalArray(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0), // 6
+                intArrayOf(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0), // 7
+                intArrayOf(0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0), // 8
+                intArrayOf(0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0), // 9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1), // 1
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)  // 5
+        ))
+
+        val windowFinder = WindowFinder(3, 3, 2, 8, 2)
+
+        val expectedWindowsLeft = arrayListOf(Window(5, 5, 8, 4), Window(2, 2, 6, 2))
+        val expectedWindowsRight = arrayListOf(Window(15, 5, 8, 4), Window(12, 2, 6, 2))
+        val (actualWindowsLeft: ArrayList<Window>, actualWindowsRight: ArrayList<Window>) = windowFinder.findWindows(image)
+
+        assertArrayListEqual(expectedWindowsLeft, actualWindowsLeft)
+        assertArrayListEqual(expectedWindowsRight, actualWindowsRight)
     }
 
     @Test
     fun testSecondWindowIsPlacedRightIfTwoStartWindowsAreFound() {
-        throw NotImplementedError()
+        val image = invertTwoDimensionalArray(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0), // 6
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0), // 7
+                intArrayOf(0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 8
+                intArrayOf(0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0), // 9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0)  // 5
+        ))
+
+        val windowFinder = WindowFinder(3, 3, 2, 8, 2)
+
+        val expectedWindowsLeft = arrayListOf(Window(0, 2, 13, 2), Window(5, 2, 8, 2), Window(7, 3, 5, 3) )
+        val expectedWindowsRight = arrayListOf(Window(10, 3, 13, 3), Window(14, 2, 9, 2), Window(16, 3, 6, 2))
+        val (actualWindowsLeft: ArrayList<Window>, actualWindowsRight: ArrayList<Window>) = windowFinder.findWindows(image)
+
+        assertArrayListEqual(expectedWindowsLeft, actualWindowsLeft)
+        assertArrayListEqual(expectedWindowsRight, actualWindowsRight)
     }
 
     @Test
     fun testWindowsAreFoundEvenIfThereAreSomeGaps() {
-        throw NotImplementedError()
+        val image = invertTwoDimensionalArray(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0), // 6
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 7
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 8
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 9
+                intArrayOf(0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0)  // 5
+        ))
+
+        val windowFinder = WindowFinder(2, 2, 2, 8, 2)
+
+        val expectedWindowsLeft = arrayListOf(Window(0, 2, 13, 2), Window(3, 2, 10, 2), Window(7, 3, 6, 2) )
+        val expectedWindowsRight = arrayListOf(Window(13, 3, 14, 2), Window(14, 2, 10, 2), Window(15, 2, 6, 1))
+        val (actualWindowsLeft: ArrayList<Window>, actualWindowsRight: ArrayList<Window>) = windowFinder.findWindows(image)
+
+        assertArrayListEqual(expectedWindowsLeft, actualWindowsLeft)
+        assertArrayListEqual(expectedWindowsRight, actualWindowsRight)
     }
 
     @Test
     fun testSearchStopsIfAWindowAffectsTheImageBorder() {
-        throw NotImplementedError()
+        val image = invertTwoDimensionalArray(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1), // 1
+                intArrayOf(1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1), // 2
+                intArrayOf(1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1), // 4
+                intArrayOf(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0), // 5
+                intArrayOf(1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0), // 6
+                intArrayOf(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0), // 7
+                intArrayOf(0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0), // 8
+                intArrayOf(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0), // 9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 5
+        ))
+
+        val windowFinder = WindowFinder(2, 2, 2, 8, 2)
+
+        val expectedWindowsLeft = arrayListOf(Window(1, 3, 8, 2), Window(0, 3, 6, 2), Window(0, 1, 5, 1) )
+        val expectedWindowsRight = arrayListOf(Window(14, 2, 8, 2), Window(16, 2, 6, 2), Window(18, 2, 4, 2))
+        val (actualWindowsLeft: ArrayList<Window>, actualWindowsRight: ArrayList<Window>) = windowFinder.findWindows(image)
+
+        assertArrayListEqual(expectedWindowsLeft, actualWindowsLeft)
+        assertArrayListEqual(expectedWindowsRight, actualWindowsRight)
     }
 
     private fun assertArrayListEqual(expected: ArrayList<Window>, actual: ArrayList<Window>) {

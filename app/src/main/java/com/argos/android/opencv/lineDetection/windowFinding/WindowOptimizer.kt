@@ -36,6 +36,20 @@ class WindowOptimizer(var mPixel: Array<IntArray>) {
         }
     }
 
+    fun maximizeWindowHeightEnlargeAbove(window: Window) {
+        val numberPixel = countPixelInWindow(window)
+        if (numberPixel == 0)
+            throw NoWindowFoundException("There aren't any pixel in the window")
+        while (window.getY() > 0) {
+            val numberPixelDecreasedWindow = numberPixel + countPixelInRow(window.getY()-1, window.getX(), window.getBorderRight())
+            if (numberPixelDecreasedWindow > numberPixel) {
+                window.decreaseY()
+                window.increaseHeight()
+            } else
+                break
+        }
+    }
+
     fun minimizeWindowWidth(window: Window) {
         minimizeWindowWidthDecreaseLeft(window)
         minimizeWindowWidthDecreaseRight(window)
@@ -44,7 +58,7 @@ class WindowOptimizer(var mPixel: Array<IntArray>) {
     fun minimizeWindowWidthDecreaseLeft(window: Window){
         val numberPixel = countPixelInWindow(window)
         if (numberPixel == 0)
-            throw NoWindowFoundException("There aren't any Pixel in Window")
+            throw NoWindowFoundException("There aren't any pixel in window")
 
         do{
             val numberPixelDecreasedWindow = numberPixel - countPixelInColumn(window.getX(), window.getY(), window.getBorderBelow())

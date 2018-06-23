@@ -19,8 +19,6 @@ class Window(x: Int, width: Int, y: Int, height: Int) {
     }
 
     fun setX(x: Int) {
-        if(x < 0)
-            throw WindowException("'x' cannot be be negative")
         mX = x
     }
 
@@ -37,8 +35,6 @@ class Window(x: Int, width: Int, y: Int, height: Int) {
     }
 
     fun setY(y: Int) {
-        if (y < 0)
-            throw WindowException("'y' cannot be negative")
         mY = y
     }
 

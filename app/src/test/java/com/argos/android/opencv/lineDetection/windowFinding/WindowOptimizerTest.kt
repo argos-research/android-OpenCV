@@ -159,6 +159,68 @@ class WindowOptimizerTest {
     }
 
     @Test
+    fun testMaximizeWindowHeightEnlargeAbove() {
+        val image = invertTwoDimensionalArray(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
+
+        val windowActual = Window(3,3, 5, 1)
+        windowOptimizer.maximizeWindowHeightEnlargeAbove(windowActual)
+
+        val windowExpected = Window(3, 3, 2, 4)
+
+        assertTrue(windowExpected.equals(windowActual))
+    }
+
+    @Test(expected = NoWindowFoundException::class)
+    fun testMaximizeWindowHeightEnlargeAboveNoWindowFound() {
+        val image = invertTwoDimensionalArray(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
+
+        val windowActual = Window(2,2, 2, 3)
+        windowOptimizer.maximizeWindowHeightEnlargeAbove(windowActual)
+    }
+
+    @Test
+    fun testMaximizeWindowHeightEnlargeAboveBorderConditions() {
+        val image = invertTwoDimensionalArray(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0
+                intArrayOf(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
+
+        val windowActual = Window(2,2, 3, 3)
+        windowOptimizer.maximizeWindowHeightEnlargeAbove(windowActual)
+
+        val windowExpected = Window(2, 2, 0, 6)
+
+        assertTrue(windowExpected.equals(windowActual))
+    }
+
+    @Test
     fun testMinimizeWindowWidth() {
         val pixels = createTwoDimensionalArray(10, 6)
         val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(2, 3, 4, 6, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
