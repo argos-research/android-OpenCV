@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.argos.android.opencv.R
 import com.argos.android.opencv.driving.AutoDrive
 import com.argos.android.opencv.driving.DnnHelper
+import com.argos.android.opencv.lineDetection.windowFinding.LaneFinder
 import org.opencv.android.Utils
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
@@ -32,6 +33,7 @@ class ImageLoadActivity : AppCompatActivity() {
     private var cascadeFilePath: String? = null
 
     private var dnnHelper: DnnHelper = DnnHelper()
+    private var laneFinder = LaneFinder()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,12 +47,12 @@ class ImageLoadActivity : AppCompatActivity() {
         setImage()
     }
 
-    fun loadLibraries() {
+    private fun loadLibraries() {
         System.loadLibrary("opencv_java3")
         System.loadLibrary("NativeArgOS")
     }
 
-    fun initExtras() {
+    private fun initExtras() {
         imageRes = intent.extras!!.getInt("image")
         feature = intent.extras!!.getString("feature")
         cascadeFilePath = intent.extras!!.getString("cascadeFilePath")
@@ -58,11 +60,11 @@ class ImageLoadActivity : AppCompatActivity() {
 
     }
 
-    fun initView() {
+    private fun initView() {
         imageView = findViewById(R.id.image_view)
     }
 
-    fun processImage() {
+    private fun processImage() {
         image = Mat()
 
         try {
@@ -79,13 +81,17 @@ class ImageLoadActivity : AppCompatActivity() {
                 else
                     Toast.makeText(this, "Error: Cascade file not loaded", Toast.LENGTH_SHORT).show()
             }
-             getString(R.string.feature_overtaking) -> image = dnnHelper.processMat(image!!).mat
-            getString(R.string.feature_lane_detection) -> {}  // ToDo
+            getString(R.string.feature_overtaking) -> image = dnnHelper.processMat(image!!).mat
+            getString(R.string.feature_lane_detection) -> processImageLaneDetection(image!!)
         }
-
     }
 
-    fun setImage() {
+    private fun processImageLaneDetection(img: Mat) {
+        image = laneFinder.getLanes(img)
+    }
+
+
+    private fun setImage() {
         /**
          * OpenCV uses BGR as its default colour order for image
          * See https://stackoverflow.com/questions/39316447/opencv-giving-wrong-color-to-colored-images-on-loading
@@ -95,9 +101,5 @@ class ImageLoadActivity : AppCompatActivity() {
         Utils.matToBitmap(image, bitmap)
 
         imageView!!.setImageBitmap(bitmap)
-    }
-
-    companion object {
-        private val TAG = "ImageLoadActivity"
     }
 }
