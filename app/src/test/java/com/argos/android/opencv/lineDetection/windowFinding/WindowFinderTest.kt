@@ -7,7 +7,7 @@ class WindowFinderTest {
 
     @Test
     fun testTwoStartWindowsAreFound() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
                 //         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
@@ -39,7 +39,7 @@ class WindowFinderTest {
 
     @Test
     fun testOneStartWindowIsFound() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
                 //         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
@@ -71,7 +71,7 @@ class WindowFinderTest {
 
     @Test(expected = NoWindowFoundException::class)
     fun testNoStartWindowFound() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
                 //         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
@@ -97,7 +97,7 @@ class WindowFinderTest {
 
     @Test
     fun testSecondWindowIsPlacedRightIfOnlyOneStartWindowIsFound() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
                 //         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
@@ -129,7 +129,7 @@ class WindowFinderTest {
 
     @Test
     fun testSecondWindowIsPlacedRightIfTwoStartWindowsAreFound() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
                 //         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
@@ -161,7 +161,7 @@ class WindowFinderTest {
 
     @Test
     fun testWindowsAreFoundEvenIfThereAreSomeGaps() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
                 //         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
@@ -193,7 +193,7 @@ class WindowFinderTest {
 
     @Test
     fun testSearchStopsIfAWindowAffectsTheImageBorder() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
                 //         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1), // 1
@@ -227,6 +227,10 @@ class WindowFinderTest {
         assertEquals(expected.size, actual.size)
         for (i in 0..expected.lastIndex)
             assertTrue(expected[i].equals(actual[i]))
+    }
+
+    private fun createBinaryImage(array: Array<IntArray>): BinaryImage {
+        return BinaryImageArrayWrapper(invertTwoDimensionalArray(array))
     }
 
     private fun invertTwoDimensionalArray(array: Array<IntArray>): Array<IntArray> {

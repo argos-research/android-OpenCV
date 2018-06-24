@@ -30,7 +30,7 @@ class WindowOptimizerTest {
 
     @Test
     fun testMaximizeWindowWidthBorderConditionsLeft() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
                 //         0  1  2  3  4  5  6  7  8  9  0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
@@ -52,7 +52,7 @@ class WindowOptimizerTest {
 
     @Test
     fun testMaximizeWindowWidthBorderConditionsRight() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
                 //         0  1  2  3  4  5  6  7  8  9  0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
@@ -96,7 +96,7 @@ class WindowOptimizerTest {
 
     @Test
     fun testMaximizeWindowWidthEnlargeLeftBorderConditions() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
             //         0  1  2  3  4  5  6  7  8  9  0
             intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
             intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
@@ -138,29 +138,28 @@ class WindowOptimizerTest {
 
     @Test
     fun testMaximizeWindowWidthEnlargeRightBorderConditions() {
-        val image = invertTwoDimensionalArray(arrayOf(
-                //         0  1  2  3  4  5  6  7  8  9  0
-                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
-                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
-                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
-                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1), // 3
-                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1), // 4
-                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
-                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 1, 1, 1), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 1, 1, 1), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 5
         ))
         val windowOptimizer = WindowOptimizer(image)
 
-        val windowActual = Window(7,2, 2, 3)
+        val windowActual = Window(6,2, 2, 3)
         windowOptimizer.maximizeWindowWidthEnlargeRight(windowActual)
 
-        val windowExpected = Window(7, 4, 2, 3)
+        val windowExpected = Window(6, 4, 2, 3)
 
         assertTrue(windowExpected.equals(windowActual))
     }
 
     @Test
     fun testMaximizeWindowHeightEnlargeAbove() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
                 //         0  1  2  3  4  5  6  7  8  9  0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
@@ -182,7 +181,7 @@ class WindowOptimizerTest {
 
     @Test(expected = NoWindowFoundException::class)
     fun testMaximizeWindowHeightEnlargeAboveNoWindowFound() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
                 //         0  1  2  3  4  5  6  7  8  9  0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
@@ -200,7 +199,7 @@ class WindowOptimizerTest {
 
     @Test
     fun testMaximizeWindowHeightEnlargeAboveBorderConditions() {
-        val image = invertTwoDimensionalArray(arrayOf(
+        val image = createBinaryImage(arrayOf(
                 //         0  1  2  3  4  5  6  7  8  9  0
                 intArrayOf(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0), // 0
                 intArrayOf(0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0), // 1
@@ -380,11 +379,15 @@ class WindowOptimizerTest {
         return Array(width) { IntArray(height) }
     }
 
-    private fun createPixels(pixels: Array<IntArray>, row: IntArray, col: IntArray): Array<IntArray> {
+    private fun createPixels(pixels: Array<IntArray>, row: IntArray, col: IntArray): BinaryImage {
         for (i in 0..(row.size-1)) {
             pixels[row[i]][col[i]] = 1
         }
-        return pixels
+        return BinaryImageArrayWrapper(pixels)
+    }
+
+    private fun createBinaryImage(array: Array<IntArray>): BinaryImage {
+        return BinaryImageArrayWrapper(invertTwoDimensionalArray(array))
     }
 
     private fun invertTwoDimensionalArray(array: Array<IntArray>): Array<IntArray> {

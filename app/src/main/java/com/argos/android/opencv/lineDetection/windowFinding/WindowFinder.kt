@@ -16,34 +16,21 @@ class WindowFinder(
     private var mHeightStartWindow: Int,
     private var mMinNumberPixelForWindow: Int) {
 
-    private lateinit var mImage: Array<IntArray>
-    private var mImageWidth: Int = 0
-    private var mImageHeight: Int = 0
+    private lateinit var mImage: BinaryImage
 
     private lateinit var mWindowOptimizer: WindowOptimizer
 
     private var mWindowsLeft: ArrayList<Window> = ArrayList()
     private var mWindowsRight: ArrayList<Window> = ArrayList()
 
-    fun findWindows(image: Array<IntArray>): Pair<ArrayList<Window>, ArrayList<Window>> {
-        setImage(image)
+    fun findWindows(image: BinaryImage): Pair<ArrayList<Window>, ArrayList<Window>> {
+        mImage = image
         mWindowOptimizer = WindowOptimizer(mImage)
 
         findWindowsLeft()
         findWindowsRight()
 
         return Pair(mWindowsLeft, mWindowsRight)
-    }
-
-    private fun setImage(image: Array<IntArray>) {
-        if (image.isEmpty())
-            throw WindowFinderException("Image is empty (width is 0)")
-        if (image[0].isEmpty())
-            throw WindowFinderException("Image is empty (height is 0)")
-
-        mImage = image
-        mImageWidth = mImage.size
-        mImageHeight = mImage[0].size
     }
 
     private fun findWindowsLeft() {
@@ -77,7 +64,7 @@ class WindowFinder(
     }
 
     private fun findBigStartWindowLeft(): Window {
-        val startWindow = Window(mImageWidth/2 - mWidthStartWindow, mWidthStartWindow, mImageHeight - mHeightStartWindow, mHeightStartWindow)
+        val startWindow = Window(mImage.getWidth()/2 - mWidthStartWindow, mWidthStartWindow, mImage.getHeight() - mHeightStartWindow, mHeightStartWindow)
         moveWindowLeftUntilMinNumberPixelInWindowFound(startWindow)
         return startWindow
     }
@@ -124,7 +111,7 @@ class WindowFinder(
     }
 
     private fun findBigStartWindowRight(): Window {
-        val startWindow = Window(mImageWidth/2, mWidthStartWindow, mImageHeight - mHeightStartWindow, mHeightStartWindow)
+        val startWindow = Window(mImage.getWidth()/2, mWidthStartWindow, mImage.getHeight() - mHeightStartWindow, mHeightStartWindow)
         moveWindowRightUntilMinNumberPixelInWindowFound(startWindow)
         return startWindow
     }
@@ -133,7 +120,7 @@ class WindowFinder(
         var numberPixelInWindow = mWindowOptimizer.countPixelInWindow(window)
         while(numberPixelInWindow < mMinNumberPixelForWindow) {
             window.increaseX()
-            if (window.getBorderRight() >= mImageWidth)
+            if (window.getBorderRight() >= mImage.getWidth())
                 throw NoWindowFoundException("No position with enough pixel into the window")
             numberPixelInWindow += mWindowOptimizer.countPixelInColumn(window.getBorderRight(), window.getY(), window.getBorderBelow())
             numberPixelInWindow -= mWindowOptimizer.countPixelInColumn(window.getX()-1, window.getY(), window.getBorderBelow())
@@ -234,9 +221,9 @@ class WindowFinder(
             } else
                 throw WindowOutOfImagePositionedException()
         }
-        if (window.getBorderRight() > mImageWidth-1) {
-            if (window.getX() <= mImageWidth-1) {
-                window.setWidth(mImageWidth-window.getX())
+        if (window.getBorderRight() > mImage.getWidth()-1) {
+            if (window.getX() <= mImage.getWidth()-1) {
+                window.setWidth(mImage.getWidth()-window.getX())
             } else
                 throw WindowOutOfImagePositionedException()
         }
@@ -247,15 +234,15 @@ class WindowFinder(
             } else
                 throw WindowOutOfImagePositionedException()
         }
-        if (window.getBorderBelow() > mImageHeight-1) {
-            if (window.getY() <= mImageHeight) {
-                window.setHeight(mImageHeight - window.getHeight())
+        if (window.getBorderBelow() > mImage.getHeight()-1) {
+            if (window.getY() <= mImage.getHeight()) {
+                window.setHeight(mImage.getHeight() - window.getHeight())
             } else
                 throw WindowOutOfImagePositionedException()
         }
     }
 
     private fun isWindowTouchingTheImageBorder(window: Window): Boolean {
-        return (window.getX() == 0 || window.getBorderRight() == mImageWidth-1 || window.getY() == 0 || window.getBorderBelow() == mImageHeight-1)
+        return (window.getX() == 0 || window.getBorderRight() == mImage.getWidth()-1 || window.getY() == 0 || window.getBorderBelow() == mImage.getHeight()-1)
     }
 }

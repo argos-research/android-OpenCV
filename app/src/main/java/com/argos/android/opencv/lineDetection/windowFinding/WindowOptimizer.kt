@@ -1,7 +1,7 @@
 package com.argos.android.opencv.lineDetection.windowFinding
 
 
-class WindowOptimizer(var mPixel: Array<IntArray>) {
+class WindowOptimizer(private var mBinaryImage: BinaryImage) {
 
     fun maximizeWindowWidth(window: Window) {
         maximizeWindowWidthEnlargeLeft(window)
@@ -27,7 +27,7 @@ class WindowOptimizer(var mPixel: Array<IntArray>) {
         val numberPixel = countPixelInWindow(window)
         if (numberPixel == 0)
             throw NoWindowFoundException("There aren't any Pixel in Window")
-        while (window.getBorderRight() < mPixel.lastIndex){
+        while (window.getBorderRight() < mBinaryImage.getWidth()-1){
             val numberPixelDecreasedWindow = numberPixel + countPixelInColumn(window.getBorderRight() + 1, window.getY(), window.getBorderBelow())
             if (numberPixel < numberPixelDecreasedWindow)
                 window.increaseWidth()
@@ -123,14 +123,14 @@ class WindowOptimizer(var mPixel: Array<IntArray>) {
     fun countPixelInColumn(x: Int, yMin: Int, yMax: Int): Int {
         var numberPixel = 0
         for (y in yMin..yMax)
-            numberPixel += mPixel[x][y]
+            numberPixel += mBinaryImage[x, y]
         return numberPixel
     }
 
     fun countPixelInRow(y: Int, xMin: Int, xMax: Int): Int{
         var numberPixel = 0
         for (x in xMin..xMax)
-            numberPixel += mPixel[x][y]
+            numberPixel += mBinaryImage[x, y]
         return numberPixel
     }
 }
