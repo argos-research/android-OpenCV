@@ -8,9 +8,17 @@ class WindowOptimizerTest {
 
     @Test
     fun testMaximizeWindowWidth() {
-        val pixels = createTwoDimensionalArray(10, 6)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(2, 3, 4, 6, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
-
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0), // 1
+                intArrayOf(0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
         val windowActual = Window(3, 1, 0, 4)
         windowOptimizer.maximizeWindowWidth(windowActual)
 
@@ -19,8 +27,17 @@ class WindowOptimizerTest {
 
     @Test(expected = NoWindowFoundException::class)
     fun testMaximizeWindowWidthNoWindowFound() {
-        val pixels = createTwoDimensionalArray(10, 6)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(0, 2, 3, 4, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(0, 9, 4, 2)
         windowOptimizer.maximizeWindowWidth(windowActual)
@@ -74,8 +91,17 @@ class WindowOptimizerTest {
 
     @Test
     fun testMaximizeWindowWidthEnlargeLeft() {
-        val pixels = createTwoDimensionalArray(10, 6)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(2, 3, 4, 6, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0), // 2
+                intArrayOf(0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(5, 2, 0, 4)
         windowOptimizer.maximizeWindowWidthEnlargeLeft(windowActual)
@@ -85,8 +111,17 @@ class WindowOptimizerTest {
 
     @Test(expected = NoWindowFoundException::class)
     fun testMaximizeWindowWidthEnlargeLeftNoWindowFound() {
-        val pixels = createTwoDimensionalArray(10, 6)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(0, 2, 3, 4, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(0, 9, 4, 2)
         windowOptimizer.maximizeWindowWidthEnlargeLeft(windowActual)
@@ -118,8 +153,17 @@ class WindowOptimizerTest {
 
     @Test
     fun testMaximizeWindowWidthEnlargeRight() {
-        val pixels = createTwoDimensionalArray(10, 6)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(2, 3, 4, 6, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0), // 1
+                intArrayOf(0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(0, 2, 0, 4)
         windowOptimizer.maximizeWindowWidthEnlargeRight(windowActual)
@@ -129,8 +173,17 @@ class WindowOptimizerTest {
 
     @Test(expected = NoWindowFoundException::class)
     fun testMaximizeWindowWidthEnlargeRightNoWindowFound() {
-        val pixels = createTwoDimensionalArray(10, 6)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(0, 2, 3, 4, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9  0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(0, 9, 4, 2)
         windowOptimizer.maximizeWindowWidthEnlargeRight(windowActual)
@@ -221,8 +274,16 @@ class WindowOptimizerTest {
 
     @Test
     fun testMinimizeWindowWidth() {
-        val pixels = createTwoDimensionalArray(10, 6)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(2, 3, 4, 6, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 1, 1, 1, 0, 1, 0, 0, 0), // 2
+                intArrayOf(0, 1, 1, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 5
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(0, 10, 0, 3)
         windowOptimizer.minimizeWindowWidth(windowActual)
@@ -232,8 +293,16 @@ class WindowOptimizerTest {
 
     @Test(expected = NoWindowFoundException::class)
     fun testMinimizeWindowWidthNoWindowFound() {
-        val pixels = createTwoDimensionalArray(10, 6)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(0, 2, 3, 4, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(1, 0, 1, 1, 1, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 1, 1, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 5
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(0, 9, 4, 2)
         windowOptimizer.minimizeWindowWidth(windowActual)
@@ -243,8 +312,16 @@ class WindowOptimizerTest {
 
     @Test
     fun testMinimizeWindowWidthDecreaseLeft() {
-        val pixels = createTwoDimensionalArray(10, 6)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(2, 3, 4, 6, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 1, 1, 1, 0, 1, 0, 0, 0), // 2
+                intArrayOf(0, 1, 1, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 5
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(0, 10, 0, 3)
         windowOptimizer.minimizeWindowWidthDecreaseLeft(windowActual)
@@ -254,8 +331,16 @@ class WindowOptimizerTest {
 
     @Test(expected = NoWindowFoundException::class)
     fun testMinimizeWindowWidthDecreaseLeftNoWindowFound() {
-        val pixels = createTwoDimensionalArray(10, 6)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(0, 2, 3, 4, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(1, 0, 1, 1, 1, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 1, 1, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 5
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(0, 9, 4, 2)
         windowOptimizer.minimizeWindowWidthDecreaseLeft(windowActual)
@@ -265,8 +350,16 @@ class WindowOptimizerTest {
 
     @Test
     fun testMinimizeWindowWidthDecreaseRight() {
-        val pixels = createTwoDimensionalArray(10, 6)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(0, 2, 3, 4, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(1, 0, 1, 1, 1, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 1, 1, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 5
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(0, 10, 0, 6)
         windowOptimizer.minimizeWindowWidthDecreaseRight(windowActual)
@@ -276,8 +369,16 @@ class WindowOptimizerTest {
 
     @Test(expected = NoWindowFoundException::class)
     fun testMinimizeWindowWidthDecreaseRightNoWindowFound() {
-        val pixels = createTwoDimensionalArray(10, 6)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(0, 2, 3, 4, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7  8  9
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(1, 0, 1, 1, 1, 0, 0, 0, 0, 0), // 2
+                intArrayOf(0, 1, 1, 0, 0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 5
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(0, 9, 4, 2)
         windowOptimizer.minimizeWindowWidthDecreaseRight(windowActual)
@@ -287,8 +388,20 @@ class WindowOptimizerTest {
 
     @Test
     fun testMinimizeWindowHeight() {
-        val pixels = createTwoDimensionalArray(6, 10)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(0, 2, 3, 4, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5
+                intArrayOf(0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(1, 0, 1, 1, 0, 0), // 2
+                intArrayOf(0, 1, 1, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0), // 6
+                intArrayOf(0, 0, 0, 0, 0, 0), // 7
+                intArrayOf(0, 0, 0, 0, 0, 0), // 8
+                intArrayOf(0, 0, 0, 0, 0, 0)  // 9
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(1, 2, 0, 8)
         windowOptimizer.minimizeWindowHeight(windowActual)
@@ -298,8 +411,20 @@ class WindowOptimizerTest {
 
     @Test(expected = NoWindowFoundException::class)
     fun testMinimizeWindowHeightNoWindowFound() {
-        val pixels = createTwoDimensionalArray(6, 10)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(1, 1, 1, 1, 3, 3), intArrayOf(0, 2, 3, 4, 1, 2)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5
+                intArrayOf(0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(1, 0, 1, 1, 1, 0), // 1
+                intArrayOf(0, 1, 1, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0), // 6
+                intArrayOf(0, 0, 0, 0, 0, 0), // 7
+                intArrayOf(0, 0, 0, 0, 0, 0), // 8
+                intArrayOf(0, 0, 0, 0, 0, 0)  // 9
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(4, 2, 2, 8)
         windowOptimizer.minimizeWindowHeight(windowActual)
@@ -307,8 +432,20 @@ class WindowOptimizerTest {
 
     @Test
     fun testMinimizeWindowHeightDecreaseAbove() {
-        val pixels = createTwoDimensionalArray(6, 10)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(0, 2, 3, 4, 1, 2), intArrayOf(2, 2, 2, 2, 3, 3)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5
+                intArrayOf(0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(1, 0, 1, 1, 1, 0), // 2
+                intArrayOf(0, 1, 1, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0), // 6
+                intArrayOf(0, 0, 0, 0, 0, 0), // 7
+                intArrayOf(0, 0, 0, 0, 0, 0), // 8
+                intArrayOf(0, 0, 0, 0, 0, 0)  // 9
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(4, 2, 0, 8)
         windowOptimizer.minimizeWindowHeightDecreaseAbove(windowActual)
@@ -318,8 +455,20 @@ class WindowOptimizerTest {
 
     @Test(expected = NoWindowFoundException::class)
     fun testMinimizeWindowHeightDecreaseAboveNoWindowFound() {
-        val pixels = createTwoDimensionalArray(6, 10)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(1, 1, 1, 1, 3, 3), intArrayOf(0, 2, 3, 4, 1, 2)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5
+                intArrayOf(0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(1, 0, 1, 1, 1, 0), // 1
+                intArrayOf(0, 1, 1, 0, 0, 0), // 2
+                intArrayOf(0, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0), // 6
+                intArrayOf(0, 0, 0, 0, 0, 0), // 7
+                intArrayOf(0, 0, 0, 0, 0, 0), // 8
+                intArrayOf(0, 0, 0, 0, 0, 0)  // 9
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(4, 2, 2, 8)
         windowOptimizer.minimizeWindowHeightDecreaseAbove(windowActual)
@@ -327,8 +476,20 @@ class WindowOptimizerTest {
 
     @Test
     fun testMinimizeWindowHeightDecreaseBelow() {
-        val pixels = createTwoDimensionalArray(6, 10)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(1, 1, 1, 1, 3, 3), intArrayOf(0, 2, 3, 4, 1, 2)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5
+                intArrayOf(0, 1, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 1, 0, 0), // 1
+                intArrayOf(0, 1, 0, 1, 0, 0), // 2
+                intArrayOf(0, 1, 0, 0, 0, 0), // 3
+                intArrayOf(0, 1, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0), // 6
+                intArrayOf(0, 0, 0, 0, 0, 0), // 7
+                intArrayOf(0, 0, 0, 0, 0, 0), // 8
+                intArrayOf(0, 0, 0, 0, 0, 0)  // 9
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(3, 2, 2, 8)
         windowOptimizer.minimizeWindowHeightDecreaseBelow(windowActual)
@@ -338,8 +499,20 @@ class WindowOptimizerTest {
 
     @Test(expected = NoWindowFoundException::class)
     fun testMinimizeWindowHeightDecreaseBelowNoWindowFound() {
-        val pixels = createTwoDimensionalArray(6, 10)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(1, 1, 1, 1, 3, 3), intArrayOf(0, 2, 3, 4, 1, 2)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5
+                intArrayOf(0, 1, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 1, 0, 0), // 1
+                intArrayOf(0, 1, 0, 1, 0, 0), // 2
+                intArrayOf(0, 1, 0, 0, 0, 0), // 3
+                intArrayOf(0, 1, 0, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0), // 6
+                intArrayOf(0, 0, 0, 0, 0, 0), // 7
+                intArrayOf(0, 0, 0, 0, 0, 0), // 8
+                intArrayOf(0, 0, 0, 0, 0, 0)  // 9
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         val windowActual = Window(4, 2, 2, 8)
         windowOptimizer.minimizeWindowHeightDecreaseBelow(windowActual)
@@ -347,8 +520,15 @@ class WindowOptimizerTest {
 
     @Test
     fun testCountPixelInWindow() {
-        val pixels = createTwoDimensionalArray(6, 5)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(1, 1, 1, 1, 3, 3), intArrayOf(0, 2, 3, 4, 1, 2)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5
+                intArrayOf(0, 1, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 1, 0, 0), // 1
+                intArrayOf(0, 1, 0, 1, 0, 0), // 2
+                intArrayOf(0, 1, 0, 0, 0, 0), // 3
+                intArrayOf(0, 1, 0, 0, 0, 0)  // 4
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         assertEquals(6, windowOptimizer.countPixelInWindow(Window(0, 6, 0, 5)))
         assertEquals(4, windowOptimizer.countPixelInWindow(Window(1, 3, 2, 3)))
@@ -357,8 +537,15 @@ class WindowOptimizerTest {
 
     @Test
     fun testCountPixelInColumn() {
-        val pixels = createTwoDimensionalArray(6, 5)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(1, 1, 1, 1, 3, 3), intArrayOf(0, 2, 3, 4, 1, 2)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6
+                intArrayOf(0, 1, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 1, 0, 0, 0), // 1
+                intArrayOf(0, 1, 0, 1, 0, 0, 0), // 2
+                intArrayOf(0, 1, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 1, 0, 0, 0, 0, 0)  // 4
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         assertEquals(4, windowOptimizer.countPixelInColumn(1, 0, 4))
         assertEquals(3, windowOptimizer.countPixelInColumn(1, 1, 4))
@@ -367,23 +554,19 @@ class WindowOptimizerTest {
 
     @Test
     fun testCountPixelInRow() {
-        val pixels = createTwoDimensionalArray(6, 5)
-        val windowOptimizer = WindowOptimizer(createPixels(pixels, intArrayOf(1, 5, 1, 1, 3, 3), intArrayOf(2, 2, 3, 4, 1, 2)))
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6
+                intArrayOf(0, 0, 0, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 1, 0, 0, 0), // 1
+                intArrayOf(0, 1, 0, 1, 0, 1, 0), // 2
+                intArrayOf(0, 1, 0, 0, 0, 0, 0), // 3
+                intArrayOf(0, 1, 0, 0, 0, 0, 0)  // 4
+        ))
+        val windowOptimizer = WindowOptimizer(image)
 
         assertEquals(1, windowOptimizer.countPixelInRow(1, 0, 4))
         assertEquals(2, windowOptimizer.countPixelInRow(2, 1, 4))
         assertEquals(0, windowOptimizer.countPixelInRow(0, 0, 4))
-    }
-
-    private fun createTwoDimensionalArray(width: Int, height: Int): Array<IntArray> {
-        return Array(width) { IntArray(height) }
-    }
-
-    private fun createPixels(pixels: Array<IntArray>, row: IntArray, col: IntArray): BinaryImage {
-        for (i in 0..(row.size-1)) {
-            pixels[row[i]][col[i]] = 1
-        }
-        return BinaryImageArrayWrapper(pixels)
     }
 
     private fun createBinaryImage(array: Array<IntArray>): BinaryImage {
