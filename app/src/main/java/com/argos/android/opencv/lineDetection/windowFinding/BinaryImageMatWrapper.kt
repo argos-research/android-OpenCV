@@ -12,7 +12,7 @@ class BinaryImageMatWrapper(private val mGrayImage: Mat, private val mThresh: In
     }
 
     override fun get(x: Int, y: Int): Int {
-        return if (mGrayImage.get(x, y)[0] < mThresh.toDouble())
+        return if (mGrayImage.get(y, x)[0] < mThresh.toDouble())
             0
         else 1
     }

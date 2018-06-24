@@ -13,6 +13,9 @@ class LaneFinder {
         private const val WIDTH_WARPED_IMAGE = 720
         private const val HEIGHT_WARPED_IMAGE = 720
     }
+
+    private val mWindowFinder = WindowFinder(64, 64, 16, 128, 20)
+
     fun getLanes(image: Mat): Mat {
         Imgproc.resize(image, image, Size(WIDTH_IMAGE.toDouble(), HEIGHT_IMAGE.toDouble()))
         val croppedImage = cropImage(image)
@@ -20,7 +23,11 @@ class LaneFinder {
         Imgproc.threshold(croppedImage, croppedImage, 120.0, 255.0, Imgproc.THRESH_BINARY)
         warpImage(croppedImage)
         Imgproc.cvtColor(croppedImage, croppedImage, Imgproc.COLOR_BGR2GRAY)
-        // find windows
+        try {
+            val (windowsLeft, windowsRight) = mWindowFinder.findWindows(BinaryImageMatWrapper(croppedImage, 250))
+            drawWindows(croppedImage, windowsLeft)
+            drawWindows(croppedImage, windowsRight)
+        } catch (e: NoWindowFoundException) { }
         // create image with lines
         // inv warp
         // un crop
@@ -57,5 +64,14 @@ class LaneFinder {
         val rightBottom = Point(WIDTH_WARPED_IMAGE-170.0, HEIGHT_WARPED_IMAGE.toDouble())
         val leftBottom = Point(170.0, HEIGHT_WARPED_IMAGE.toDouble())
         return MatOfPoint2f(leftTop, rightTop, rightBottom, leftBottom)
+    }
+
+    private fun drawWindows(image: Mat, windows: ArrayList<Window>) {
+        for (window in windows)
+        Imgproc.rectangle(
+                image,
+                Point(window.getX().toDouble(), window.getY().toDouble()),
+                Point(window.getBorderRight().toDouble(), window.getBorderBelow().toDouble()),
+                Scalar(255.0, 255.0, 0.0))
     }
 }
