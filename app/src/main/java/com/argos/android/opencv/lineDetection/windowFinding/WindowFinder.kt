@@ -216,7 +216,7 @@ class WindowFinder(
     private fun resizeWindowIfItsOutsideTheImage(window: Window) {
         if (window.getX() < 0) {
             if (window.getBorderRight() >= 0) {
-                window.setWidth(window.getWidth() - window.getX())
+                window.setWidth(window.getWidth() + window.getX())
                 window.setX(0)
             } else
                 throw WindowOutOfImagePositionedException()
@@ -229,14 +229,14 @@ class WindowFinder(
         }
         if (window.getY() < 0) {
             if (window.getBorderBelow() >= 0) {
-                window.setHeight(window.getHeight() - window.getY())
+                window.setHeight(window.getHeight() + window.getY())
                 window.setY(0)
             } else
                 throw WindowOutOfImagePositionedException()
         }
         if (window.getBorderBelow() > mImage.getHeight()-1) {
             if (window.getY() <= mImage.getHeight()) {
-                window.setHeight(mImage.getHeight() - window.getHeight())
+                window.setHeight(mImage.getHeight() - window.getY())
             } else
                 throw WindowOutOfImagePositionedException()
         }
