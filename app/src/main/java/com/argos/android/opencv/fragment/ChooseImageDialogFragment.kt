@@ -16,7 +16,23 @@ import com.argos.android.opencv.adapter.ImageListAdapter
 class ChooseImageDialogFragment : BottomSheetDialogFragment() {
     private var recyclerView: RecyclerView? = null
     private var imageListAdapter: ImageListAdapter? = null
-    private val images = intArrayOf(R.drawable.scene_1, R.drawable.scene_2,R.drawable.speed_dreams1,R.drawable.speed_dreams3,R.drawable.speed_dreams4, R.drawable.speed_dreams5,R.drawable.speed_dreams6,R.drawable.speed_dreams7,R.drawable.speed_dreams8)
+    private val images = intArrayOf(
+            R.drawable.speed_dreams1,
+            R.drawable.speed_dreams3,
+            R.drawable.speed_dreams4,
+            R.drawable.speed_dreams5,
+            R.drawable.speed_dreams6,
+            R.drawable.speed_dreams7,
+            R.drawable.speed_dreams8,
+            R.drawable.scene_1,
+            R.drawable.scene_2,
+            R.drawable.track_01,
+            R.drawable.track_02,
+            R.drawable.track_03,
+            R.drawable.track_04,
+            R.drawable.track_05,
+            R.drawable.track_06
+          )
 
     override fun setupDialog(dialog: Dialog, style: Int) {
         val contentView = View.inflate(context, R.layout.choose_image, null)

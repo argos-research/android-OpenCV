@@ -146,6 +146,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
                 setImage(srcMat)
                 setDistance(dnnResponse.distance)
             }
+            getString(R.string.feature_lane_detection) -> {}  // ToDo
         }
         setFps()
         return srcMat
