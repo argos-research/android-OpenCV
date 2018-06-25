@@ -25,6 +25,9 @@ public class DnnHelper {
 
     double distance;
 
+    double knownHeight = 1300;
+    double focalLength = 250;
+
     public DnnHelper() {
 
     }
@@ -93,6 +96,11 @@ public class DnnHelper {
                 int xRightTop = (int) (detections.get(i, 5)[0] * cols);
                 int yRightTop = (int) (detections.get(i, 6)[0] * rows);
 
+                //only count distance for cavallo
+                if(classId == 2) {
+                    distance = getDistanceToCamera(yRightTop - yLeftBottom);
+                }
+
                 // Draw rectangle around detected object.
                 Imgproc.rectangle(subFrame, new Point(xLeftBottom, yLeftBottom),
                         new Point(xRightTop, yRightTop),
@@ -115,7 +123,11 @@ public class DnnHelper {
             }
         }
         subFrame.release();
-        return new DnnRespone(frame,distance);
+        return new DnnRespone(frame,distance/1000);
+    }
+
+    private double getDistanceToCamera(int pixelHeight){
+        return (knownHeight * focalLength) / pixelHeight;
     }
 
     private String getNameForClass(int classId) {

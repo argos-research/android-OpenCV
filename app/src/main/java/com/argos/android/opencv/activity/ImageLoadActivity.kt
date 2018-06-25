@@ -37,6 +37,8 @@ class ImageLoadActivity : AppCompatActivity() {
     private var dnnHelper: DnnHelper = DnnHelper()
     private var laneFinder = LaneFinder()
 
+    
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

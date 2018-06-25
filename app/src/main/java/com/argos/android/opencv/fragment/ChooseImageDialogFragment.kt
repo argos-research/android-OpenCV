@@ -17,6 +17,11 @@ class ChooseImageDialogFragment : BottomSheetDialogFragment() {
     private var recyclerView: RecyclerView? = null
     private var imageListAdapter: ImageListAdapter? = null
     private val images = intArrayOf(
+            R.drawable.speed_dreams1,
+            R.drawable.speed_dreams3,
+            R.drawable.speed_dreams4,
+            R.drawable.speed_dreams5,
+            R.drawable.speed_dreams6,
             R.drawable.scene_1,
             R.drawable.scene_2,
             R.drawable.track_01,
@@ -24,10 +29,8 @@ class ChooseImageDialogFragment : BottomSheetDialogFragment() {
             R.drawable.track_03,
             R.drawable.track_04,
             R.drawable.track_05,
-            R.drawable.track_06,
-            R.drawable.speed_dreams1,
-            R.drawable.speed_dreams3,
-            R.drawable.speed_dreams4)
+            R.drawable.track_06
+          )
 
     override fun setupDialog(dialog: Dialog, style: Int) {
         val contentView = View.inflate(context, R.layout.choose_image, null)
