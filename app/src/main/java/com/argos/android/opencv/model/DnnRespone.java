@@ -27,4 +27,5 @@ public class DnnRespone {
     public void setDistance(double distance) {
         this.distance = distance;
     }
+
 }

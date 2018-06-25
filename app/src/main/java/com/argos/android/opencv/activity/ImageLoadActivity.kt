@@ -33,6 +33,8 @@ class ImageLoadActivity : AppCompatActivity() {
 
     private var dnnHelper: DnnHelper = DnnHelper()
 
+    
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -80,9 +80,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         cameraView = findViewById(R.id.opencv_cameraview)
         cameraView!!.visibility = SurfaceView.VISIBLE
-
         cameraView!!.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT)
-
         directionView = findViewById(R.id.imageview_direction)
 
         when (feature) {
