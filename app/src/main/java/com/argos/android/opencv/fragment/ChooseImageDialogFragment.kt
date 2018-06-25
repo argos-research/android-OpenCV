@@ -22,8 +22,6 @@ class ChooseImageDialogFragment : BottomSheetDialogFragment() {
             R.drawable.speed_dreams4,
             R.drawable.speed_dreams5,
             R.drawable.speed_dreams6,
-            R.drawable.speed_dreams7,
-            R.drawable.speed_dreams8,
             R.drawable.scene_1,
             R.drawable.scene_2,
             R.drawable.track_01,
