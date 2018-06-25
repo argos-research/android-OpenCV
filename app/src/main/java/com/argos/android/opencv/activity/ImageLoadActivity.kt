@@ -11,7 +11,9 @@ import com.argos.android.opencv.driving.AutoDrive
 import com.argos.android.opencv.driving.DnnHelper
 import com.argos.android.opencv.lineDetection.windowFinding.LaneFinder
 import org.opencv.android.Utils
+import org.opencv.core.Core
 import org.opencv.core.Mat
+import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 import java.io.IOException
 
@@ -87,7 +89,9 @@ class ImageLoadActivity : AppCompatActivity() {
     }
 
     private fun processImageLaneDetection(img: Mat) {
-        image = laneFinder.getLanes(img)
+        Imgproc.resize(img, img, Size(LaneFinder.WIDTH_IMAGE.toDouble(), LaneFinder.HEIGHT_IMAGE.toDouble()))
+        val imageLanes = laneFinder.getLanes(img.clone())
+        Core.addWeighted(img, 1.0, imageLanes, 0.7, 0.0, image)
     }
 
 

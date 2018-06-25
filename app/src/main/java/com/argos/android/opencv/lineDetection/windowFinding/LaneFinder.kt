@@ -3,10 +3,13 @@ package com.argos.android.opencv.lineDetection.windowFinding
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 
+class LaneFinderException(message: String) : Exception(message)
+
+
 class LaneFinder {
     companion object {
-        private const val WIDTH_IMAGE = 1280
-        private const val HEIGHT_IMAGE = 720
+        const val WIDTH_IMAGE = 1280
+        const val HEIGHT_IMAGE = 720
 
         private const val HEIGHT_CROPPED_IMAGE = 370
 
@@ -17,21 +20,25 @@ class LaneFinder {
     private val mWindowFinder = WindowFinder(64, 64, 16, 128, 20)
 
     fun getLanes(image: Mat): Mat {
-        Imgproc.resize(image, image, Size(WIDTH_IMAGE.toDouble(), HEIGHT_IMAGE.toDouble()))
+        checkImageSize(image)
+        val imageLines = Mat(HEIGHT_IMAGE, WIDTH_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
+        drawLines(imageLines, preProcessImage(image))
+        return imageLines
+    }
+
+    private fun checkImageSize(image: Mat) {
+        if (image.width() != WIDTH_IMAGE)
+            throw LaneFinderException("Wrong image width")
+        if (image.height() != HEIGHT_IMAGE)
+            throw LaneFinderException("Wrong image height")
+    }
+
+    private fun preProcessImage(image: Mat): Mat {
         val croppedImage = cropImage(image)
         Imgproc.GaussianBlur(croppedImage, croppedImage, Size(3.0, 3.0), 0.0)
         Imgproc.threshold(croppedImage, croppedImage, 120.0, 255.0, Imgproc.THRESH_BINARY)
         warpImage(croppedImage)
         Imgproc.cvtColor(croppedImage, croppedImage, Imgproc.COLOR_BGR2GRAY)
-        try {
-            val (windowsLeft, windowsRight) = mWindowFinder.findWindows(BinaryImageMatWrapper(croppedImage, 250))
-            drawWindows(croppedImage, windowsLeft)
-            drawWindows(croppedImage, windowsRight)
-        } catch (e: NoWindowFoundException) { }
-        // create image with lines
-        // inv warp
-        // un crop
-        Imgproc.cvtColor(croppedImage, croppedImage, Imgproc.COLOR_GRAY2BGR)
         return croppedImage
     }
 
@@ -42,12 +49,12 @@ class LaneFinder {
 
     private fun warpImage(image: Mat) {
         val m = Imgproc.getPerspectiveTransform(getSrcMatrix(), getDstMatrix())
-        Imgproc.warpPerspective(image, image, m, Size(720.0, 720.0))
+        Imgproc.warpPerspective(image, image, m, Size(WIDTH_WARPED_IMAGE.toDouble(), HEIGHT_WARPED_IMAGE.toDouble()))
     }
 
     private fun invWarpImage(image: Mat) {
-        val m = Imgproc.getPerspectiveTransform(getSrcMatrix(), getDstMatrix())
-        Imgproc.warpPerspective(image, image, m, Size(720.0, 720.0))
+        val m = Imgproc.getPerspectiveTransform(getDstMatrix(), getSrcMatrix())
+        Imgproc.warpPerspective(image, image, m, Size(WIDTH_IMAGE.toDouble(), HEIGHT_CROPPED_IMAGE.toDouble()))
     }
 
     private fun getSrcMatrix(): Mat {
@@ -66,12 +73,25 @@ class LaneFinder {
         return MatOfPoint2f(leftTop, rightTop, rightBottom, leftBottom)
     }
 
+    private fun drawLines(imageDst: Mat, binaryImage: Mat) {
+        try {
+            val (windowsLeft, windowsRight) = mWindowFinder.findWindows(BinaryImageMatWrapper(binaryImage, 250))
+
+            val croppedPart = Mat(HEIGHT_WARPED_IMAGE, WIDTH_WARPED_IMAGE, CvType.CV_8UC3, Scalar(0.0,0.0,0.0))
+            drawWindows(croppedPart, windowsLeft)
+            drawWindows(croppedPart, windowsRight)
+            invWarpImage(croppedPart)
+            croppedPart.copyTo(imageDst.submat(Rect(0, HEIGHT_IMAGE-HEIGHT_CROPPED_IMAGE, WIDTH_IMAGE, HEIGHT_CROPPED_IMAGE)))
+        } catch (e: NoWindowFoundException) { }
+    }
+
     private fun drawWindows(image: Mat, windows: ArrayList<Window>) {
         for (window in windows)
         Imgproc.rectangle(
                 image,
                 Point(window.getX().toDouble(), window.getY().toDouble()),
                 Point(window.getBorderRight().toDouble(), window.getBorderBelow().toDouble()),
-                Scalar(255.0, 255.0, 0.0))
+                Scalar(0.0, 255.0, 0.0),
+                5)
     }
 }
