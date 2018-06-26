@@ -90,8 +90,9 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
 
     private fun initList() {
         features = ArrayList()
-        features!!.add(Feature(getString(R.string.feature_lane), R.drawable.lane_detection_thumbnail))
-        features!!.add(Feature(getString(R.string.feature_vehicle), R.drawable.vehicle_detection_thumbnail))
+        /** removed previous features, comment in to add again */
+        //features!!.add(Feature(getString(R.string.feature_lane), R.drawable.lane_detection_thumbnail))
+        //features!!.add(Feature(getString(R.string.feature_vehicle), R.drawable.vehicle_detection_thumbnail))
         features!!.add(Feature(getString(R.string.feature_overtaking), R.drawable.vehicle_detection_thumbnail))
         features!!.add(Feature(getString(R.string.feature_lane_detection), R.drawable.lane_detection_thumbnail))
 
@@ -148,8 +149,8 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
 
     override fun launchCameraDetection(feature: Feature) {
 
-      //  val intent = Intent(this@MainActivity, DnnActivity::class.java)
-       // startActivity(intent)
+        //  val intent = Intent(this@MainActivity, DnnActivity::class.java)
+        // startActivity(intent)
 
         val intent = Intent(this@MainActivity, CameraActivity::class.java)
         intent.putExtra("cascadeFilePath", cascadeFile!!.absolutePath)
