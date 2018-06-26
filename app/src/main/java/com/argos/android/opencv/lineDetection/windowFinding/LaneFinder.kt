@@ -20,17 +20,19 @@ class LaneFinder {
     private val mWindowFinder = WindowFinder(64, 64, 16, 128, 20)
 
     fun getLanes(image: Mat): Mat {
-        checkImageSize(image)
-        val imageLines = Mat(HEIGHT_IMAGE, WIDTH_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
+        checkImage(image)
+        val imageLines = Mat(HEIGHT_IMAGE, WIDTH_IMAGE, image.type(), Scalar(0.0, 0.0, 0.0))
         drawLines(imageLines, preProcessImage(image))
         return imageLines
     }
 
-    private fun checkImageSize(image: Mat) {
+    private fun checkImage(image: Mat) {
         if (image.width() != WIDTH_IMAGE)
             throw LaneFinderException("Wrong image width")
         if (image.height() != HEIGHT_IMAGE)
             throw LaneFinderException("Wrong image height")
+        if (!(image.type() == CvType.CV_8UC3 || image.type() == CvType.CV_8UC4))
+            throw LaneFinderException("Wrong image type")
     }
 
     private fun preProcessImage(image: Mat): Mat {
