@@ -24,8 +24,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/scene_1" />
+        android:scaleType="fitCenter" />
 
     <TextView
         android:id="@+id/txtFps"
