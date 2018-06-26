@@ -90,9 +90,6 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
 
     private fun initList() {
         features = ArrayList()
-        /** removed previous features, comment in to add again */
-        //features!!.add(Feature(getString(R.string.feature_lane), R.drawable.lane_detection_thumbnail))
-        //features!!.add(Feature(getString(R.string.feature_vehicle), R.drawable.vehicle_detection_thumbnail))
         features!!.add(Feature(getString(R.string.feature_overtaking), R.drawable.vehicle_detection_thumbnail))
         features!!.add(Feature(getString(R.string.feature_lane_detection), R.drawable.lane_detection_thumbnail))
 

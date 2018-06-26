@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
-import android.widget.Toast
 import com.argos.android.opencv.R
-import com.argos.android.opencv.driving.AutoDrive
 import com.argos.android.opencv.driving.DnnHelper
 import com.argos.android.opencv.lineDetection.windowFinding.LaneFinder
 import org.opencv.android.Utils
@@ -23,9 +21,7 @@ import java.io.IOException
  * 1) Add images inside the drawable directory
  * 2) Include drawables in the images array [com.argos.android.opencv.fragment.ChooseImageDialogFragment.images]
  */
-
 class ImageLoadActivity : AppCompatActivity() {
-
     private var image: Mat? = null
     private var imageView: ImageView? = null
 
@@ -36,9 +32,6 @@ class ImageLoadActivity : AppCompatActivity() {
 
     private var dnnHelper: DnnHelper = DnnHelper()
     private var laneFinder = LaneFinder()
-
-    
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +46,6 @@ class ImageLoadActivity : AppCompatActivity() {
 
     private fun loadLibraries() {
         System.loadLibrary("opencv_java3")
-        System.loadLibrary("NativeArgOS")
     }
 
     private fun initExtras() {
@@ -65,7 +57,7 @@ class ImageLoadActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        imageView = findViewById(R.id.image_view)
+        imageView = findViewById(R.id.imageView)
     }
 
     private fun processImage() {
@@ -78,13 +70,6 @@ class ImageLoadActivity : AppCompatActivity() {
         }
 
         when (feature) {
-            getString(R.string.feature_lane) -> AutoDrive.drive(image!!.nativeObjAddr)
-            getString(R.string.feature_vehicle) -> {
-                if (MainActivity.CASCADE_FILE_LOADED)
-                    AutoDrive.detectVehicle(cascadeFilePath!!, image!!.nativeObjAddr)
-                else
-                    Toast.makeText(this, "Error: Cascade file not loaded", Toast.LENGTH_SHORT).show()
-            }
             getString(R.string.feature_overtaking) -> image = dnnHelper.processMat(image!!).mat
             getString(R.string.feature_lane_detection) -> processImageLaneDetection(image!!)
         }
@@ -95,7 +80,6 @@ class ImageLoadActivity : AppCompatActivity() {
         val imageLanes = laneFinder.getLanes(img.clone())
         Core.addWeighted(img, 1.0, imageLanes, 0.7, 0.0, image)
     }
-
 
     private fun setImage() {
         /**

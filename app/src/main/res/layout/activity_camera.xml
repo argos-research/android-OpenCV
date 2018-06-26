@@ -6,10 +6,10 @@
     android:layout_height="match_parent">
 
     <org.opencv.android.JavaCameraView
+        android:id="@+id/opencvCameraView"
         android:visibility="invisible"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:id="@+id/opencv_cameraview"
         />
 
     <View
@@ -19,25 +19,13 @@
         android:background="@android:color/black"/>
 
     <ImageView
-        android:id="@+id/image_view"
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:scaleType="centerCrop"
         android:src="@drawable/scene_1" />
-
-
-    <ImageView
-        android:id="@+id/imageview_direction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:padding="@dimen/margin_normal"
-        android:src="@drawable/straight"
-        android:tint="@color/arrow_direction" />
 
     <TextView
         android:id="@+id/txtFps"
