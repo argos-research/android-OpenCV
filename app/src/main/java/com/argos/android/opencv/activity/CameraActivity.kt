@@ -8,27 +8,24 @@ import android.util.Log
 import android.view.SurfaceView
 import android.view.View
 import com.argos.android.opencv.R
+import com.argos.android.opencv.camera.*
 import com.argos.android.opencv.driving.DnnHelper
 import com.argos.android.opencv.model.DnnRespone
 import kotlinx.android.synthetic.main.activity_camera.*
 import org.opencv.android.*
-import org.opencv.core.Core
-import org.opencv.core.Mat
+import org.opencv.core.*
+import org.opencv.imgproc.Imgproc
 import java.text.DecimalFormat
+import kotlin.math.max
 
-/**
- * Activity to run the OpenCV algorithm on Camera
- */
 
-class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListener2 {
+class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListener2, CameraFrameMangerCaller {
     companion object {
-        /**
-         * 640x480 produced the best FPS on moderate smart phones.
-         * TODO: Implement choosing screen width and height within the app.
-         * Note that the ROI is also hardcoded considering dimensions as 640x480, you might need to change that too!
-         */
-        private const val SCREEN_WIDTH = 640
-        private const val SCREEN_HEIGHT = 480
+//        private const val SCREEN_WIDTH = 640
+//        private const val SCREEN_HEIGHT = 480
+
+        private const val SCREEN_WIDTH = 1280
+        private const val SCREEN_HEIGHT = 720
     }
 
     private var decorView: View? = null
@@ -52,6 +49,11 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         }
     }
 
+    private lateinit var mCameraFrameManager: CameraFrameManager
+
+    private lateinit var mCurrentFrame: Mat
+    private var mShowDebug = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
@@ -74,10 +76,6 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         cameraView = findViewById(R.id.opencvCameraView)
         cameraView!!.visibility = SurfaceView.VISIBLE
         cameraView!!.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT)
-
-        when (feature) {
-            getString(R.string.feature_overtaking) -> {}
-        }
     }
 
     private fun initListener() {
@@ -108,6 +106,9 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
             Log.d(CameraActivity::class.java.simpleName, "OpenCV load failed")
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, this, loader)
         }
+
+        mCameraFrameManager = CameraFrameManager(this)
+        mCameraFrameManager.start()
     }
 
     override fun onCameraViewStarted(width: Int, height: Int) {
@@ -116,39 +117,69 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     }
 
     override fun onCameraViewStopped() {
-
+        mCameraFrameManager.finish()
     }
 
     override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
-        var srcMat = inputFrame.rgba()
+        mCurrentFrame = inputFrame.rgba()
+        var currentFrame = mCurrentFrame.clone()
         val dnnResponse : DnnRespone?
 
         when (feature) {
             getString(R.string.feature_overtaking) -> {
                 dnnResponse = dnnHelper.onCameraFrame(inputFrame)
-                srcMat = dnnResponse.mat
-                setImage(srcMat)
+                currentFrame = dnnResponse.mat
+                setImage(currentFrame)
                 setDistance(dnnResponse.distance)
             }
-            getString(R.string.feature_lane_detection) -> {}  // ToDo
+            getString(R.string.feature_lane_detection) -> onCameraFrameLaneDetection(currentFrame)
         }
         setFps()
-        return srcMat
+        return mCurrentFrame
     }
 
-    private fun setImage(image:Mat?) {
-        /**
-         * OpenCV uses BGR as its default colour order for image
-         * See https://stackoverflow.com/questions/39316447/opencv-giving-wrong-color-to-colored-images-on-loading
-         */
-       // Imgproc.cvtColor(image!!, image!!, Imgproc.COLOR_BGR2RGB)
-        val bitmap = Bitmap.createBitmap(image!!.width(), image!!.height(), Bitmap.Config.ARGB_8888)
+    private fun onCameraFrameLaneDetection(currentFrame: Mat) {
+        val image = currentFrame.clone()
+        Imgproc.cvtColor(image, image, Imgproc.COLOR_RGB2BGR)
+        try {
+            val frameInfo = mCameraFrameManager.getFrameInfo()
+            Core.addWeighted(image, 1.0, frameInfo, 0.7, 0.0, image)
+        } catch (e: NoCameraFrameInfoAvailableException) { }
+
+        if (mShowDebug)
+            setImage(createDebugImage(image))
+        else
+            setImage(image)
+    }
+
+    private fun createDebugImage(image: Mat): Mat {
+        return try {
+            val debugImage = mCameraFrameManager.getDebugImage()
+            val displayedImage = Mat(Size((image.width() + debugImage.width()).toDouble(), max(image.height(), debugImage.height()).toDouble()), CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
+            image.copyTo(displayedImage.submat(Rect(0, 0, image.width(), image.height())))
+            debugImage.copyTo(displayedImage.submat(Rect(image.width(), 0, debugImage.width(), debugImage.height())))
+            displayedImage
+        } catch (e: NoDebugImageAvailableException) {
+            image
+        }
+    }
+
+    override fun getCopyOfCurrentFrame(): Mat {
+        try {
+            return mCurrentFrame.clone()
+        } catch (e: UninitializedPropertyAccessException) {
+            throw NoCurrentFrameAvailableException("Current frame not initialized")
+        }
+    }
+
+    private fun setImage(image: Mat) {
+        Imgproc.cvtColor(image, image, Imgproc.COLOR_BGR2RGB)
+        val bitmap = Bitmap.createBitmap(image.width(), image.height(), Bitmap.Config.ARGB_8888)
         Utils.matToBitmap(image, bitmap)
 
         runOnUiThread {
             imageView!!.setImageBitmap(bitmap)
         }
-
     }
 
     @SuppressLint("SetTextI18n")
@@ -162,7 +193,6 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     }
 
     // FPS counter CODE
-
     private fun setFps(){
         runOnUiThread {
             measure()

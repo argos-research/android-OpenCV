@@ -27,7 +27,9 @@ class WindowFinder(
         mImage = image
         mWindowOptimizer = WindowOptimizer(mImage)
 
+        mWindowsLeft = ArrayList()
         findWindowsLeft()
+        mWindowsRight = ArrayList()
         findWindowsRight()
 
         return Pair(mWindowsLeft, mWindowsRight)

@@ -20,10 +20,16 @@ class LaneFinder {
     private val mWindowFinder = WindowFinder(64, 64, 16, 128, 20)
 
     fun getLanes(image: Mat): Mat {
+        val (imageLanes, _) = getLanesAndBinaryImage(image)
+        return imageLanes
+    }
+
+    fun getLanesAndBinaryImage(image: Mat): Pair<Mat, Mat> {
         checkImage(image)
-        val imageLines = Mat(HEIGHT_IMAGE, WIDTH_IMAGE, image.type(), Scalar(0.0, 0.0, 0.0))
-        drawLines(imageLines, preProcessImage(image))
-        return imageLines
+        val preProcessedImage = preProcessImage(image)
+        val imageLanes = Mat(HEIGHT_IMAGE, WIDTH_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
+        drawLines(imageLanes, preProcessedImage)
+        return Pair(imageLanes, preProcessedImage)
     }
 
     private fun checkImage(image: Mat) {
@@ -78,6 +84,9 @@ class LaneFinder {
     private fun drawLines(imageDst: Mat, binaryImage: Mat) {
         try {
             val (windowsLeft, windowsRight) = mWindowFinder.findWindows(BinaryImageMatWrapper(binaryImage, 250))
+            Imgproc.cvtColor(binaryImage, binaryImage, Imgproc.COLOR_GRAY2BGR)
+            drawWindows(binaryImage, windowsRight)
+            drawWindows(binaryImage, windowsLeft)
 
             val croppedPart = Mat(HEIGHT_WARPED_IMAGE, WIDTH_WARPED_IMAGE, CvType.CV_8UC3, Scalar(0.0,0.0,0.0))
             drawWindows(croppedPart, windowsLeft)
