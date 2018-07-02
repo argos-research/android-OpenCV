@@ -1,10 +1,12 @@
 package com.argos.android.opencv.camera
 
+import android.util.Log
 import com.argos.android.opencv.lineDetection.windowFinding.LaneFinder
+import com.argos.android.opencv.model.Feature
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 
-class CameraFrameManager(private val mCaller: CameraFrameMangerCaller): Thread() {
+class CameraFrameManager(private val mCaller: CameraFrameMangerCaller, private val mFeature: Feature): Thread() {
 
     private var mLaneFinder = LaneFinder()
     private lateinit var mFrameInfo: Mat
@@ -26,10 +28,11 @@ class CameraFrameManager(private val mCaller: CameraFrameMangerCaller): Thread()
     }
 
     private fun laneDetection(frame: Mat) {
+//        val (frameInfo, binaryImage) = mFeature.getFrameInfoAndDebugImage(frame)
         val (frameInfo, binaryImage) = mLaneFinder.getLanesAndBinaryImage(frame)
         Imgproc.cvtColor(frameInfo, frameInfo, Imgproc.COLOR_RGB2BGR)
         setFrameInfo(frameInfo.clone())
-        setDebugImage(binaryImage.clone())
+        binaryImage?.let { setDebugImage(binaryImage.clone()) }
     }
 
     @Synchronized

@@ -25,11 +25,12 @@ import com.argos.android.opencv.fragment.ChooseImageDialogFragment
 import com.argos.android.opencv.interfaces.DialogCallback
 import com.argos.android.opencv.interfaces.MainActivityCallback
 import com.argos.android.opencv.model.Feature
+import com.argos.android.opencv.model.FeatureLaneDetection
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
 
@@ -37,7 +38,7 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
     private var bottomSheet: BottomSheetDialogFragment? = null
     private var layoutManager: LinearLayoutManager? = null
     private var adapter: FeatureListAdapter? = null
-    private var features: ArrayList<Feature>? = null
+    private var mFeatureList: ArrayList<Feature> = ArrayList()
     private var cascadeFile: File? = null
     private var inputStream: InputStream? = null
     private var outputStream: FileOutputStream? = null
@@ -89,14 +90,13 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
     }
 
     private fun initList() {
-        features = ArrayList()
-        features!!.add(Feature(getString(R.string.feature_overtaking), R.drawable.vehicle_detection_thumbnail))
-        features!!.add(Feature(getString(R.string.feature_lane_detection), R.drawable.lane_detection_thumbnail))
+        mFeatureList.add(Feature(getString(R.string.feature_overtaking), R.drawable.vehicle_detection_thumbnail))
+        mFeatureList.add(FeatureLaneDetection(getString(R.string.feature_lane_detection), R.drawable.lane_detection_thumbnail))
 
         layoutManager = LinearLayoutManager(this)
         recyclerView!!.layoutManager = layoutManager
 
-        adapter = FeatureListAdapter(features!!, this)
+        adapter = FeatureListAdapter(mFeatureList, this)
         recyclerView!!.adapter = adapter
     }
 
@@ -145,13 +145,9 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
     }
 
     override fun launchCameraDetection(feature: Feature) {
-
-        //  val intent = Intent(this@MainActivity, DnnActivity::class.java)
-        // startActivity(intent)
-
         val intent = Intent(this@MainActivity, CameraActivity::class.java)
         intent.putExtra("cascadeFilePath", cascadeFile!!.absolutePath)
-        intent.putExtra("feature", feature.featureName)
+        intent.putExtra("feature", feature)
         startActivity(intent)
 
     }
@@ -168,6 +164,6 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
     companion object {
         private const val TAG = "MainActivity"
         private var version: String? = null
-        public var CASCADE_FILE_LOADED = true
+        private var CASCADE_FILE_LOADED = true
     }
 }

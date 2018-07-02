@@ -11,6 +11,8 @@ import com.argos.android.opencv.R
 import com.argos.android.opencv.camera.*
 import com.argos.android.opencv.driving.DnnHelper
 import com.argos.android.opencv.model.DnnRespone
+import com.argos.android.opencv.model.Feature
+import com.argos.android.opencv.model.FeatureLaneDetection
 import kotlinx.android.synthetic.main.activity_camera.*
 import org.opencv.android.*
 import org.opencv.core.*
@@ -32,7 +34,8 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     private var cameraView: CameraBridgeViewBase? = null
 
-    private var feature: String? = null
+//    private var feature: String? = null
+    private lateinit var mFeature: Feature
     private var cascadeFilePath: String? = null
 
     private var dnnHelper: DnnHelper = DnnHelper()
@@ -64,7 +67,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     }
 
     private fun initExtras() {
-        feature = intent.extras!!.getString("feature")
+        mFeature = intent.extras!!.getParcelable("feature")
         cascadeFilePath = intent.extras!!.getString("cascadeFilePath")
     }
 
@@ -107,7 +110,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, this, loader)
         }
 
-        mCameraFrameManager = CameraFrameManager(this)
+        mCameraFrameManager = CameraFrameManager(this, mFeature)
         mCameraFrameManager.start()
     }
 
@@ -122,25 +125,9 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
         mCurrentFrame = inputFrame.rgba()
-        var currentFrame = mCurrentFrame.clone()
-        val dnnResponse : DnnRespone?
-
-        when (feature) {
-            getString(R.string.feature_overtaking) -> {
-                dnnResponse = dnnHelper.onCameraFrame(inputFrame)
-                currentFrame = dnnResponse.mat
-                setImage(currentFrame)
-                setDistance(dnnResponse.distance)
-            }
-            getString(R.string.feature_lane_detection) -> onCameraFrameLaneDetection(currentFrame)
-        }
-        setFps()
-        return mCurrentFrame
-    }
-
-    private fun onCameraFrameLaneDetection(currentFrame: Mat) {
-        val image = currentFrame.clone()
+        val image = mCurrentFrame.clone()
         Imgproc.cvtColor(image, image, Imgproc.COLOR_RGB2BGR)
+
         try {
             val frameInfo = mCameraFrameManager.getFrameInfo()
             Core.addWeighted(image, 1.0, frameInfo, 0.7, 0.0, image)
@@ -150,6 +137,9 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
             setImage(createDebugImage(image))
         else
             setImage(image)
+
+        setFps()
+        return mCurrentFrame
     }
 
     private fun createDebugImage(image: Mat): Mat {
