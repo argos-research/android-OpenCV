@@ -8,6 +8,7 @@ import com.argos.android.opencv.model.DnnRespone;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -79,7 +80,10 @@ public class DnnHelper {
         int y2 = (int) (y1 + cropSize.height);
         int x1 = (int) (cols - cropSize.width) / 2;
         int x2 = (int) (x1 + cropSize.width);
-        Mat subFrame = frame.submat(y1, y2, x1, x2);
+
+        Mat retFrame = new Mat(rows, cols, CvType.CV_8UC3, new Scalar(0.0, 0.0, 0.0, 0.0));
+        Mat subFrame = retFrame.submat(y1, y2, x1, x2);
+
 
         cols = subFrame.cols();
         rows = subFrame.rows();
@@ -123,7 +127,7 @@ public class DnnHelper {
             }
         }
         subFrame.release();
-        return new DnnRespone(frame,distance/1000);
+        return new DnnRespone(retFrame,distance/1000);
     }
 
     private double getDistanceToCamera(int pixelHeight){

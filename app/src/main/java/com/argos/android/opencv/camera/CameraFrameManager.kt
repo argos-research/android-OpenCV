@@ -1,17 +1,23 @@
 package com.argos.android.opencv.camera
 
-import android.util.Log
+import com.argos.android.opencv.activity.CameraActivity
+import com.argos.android.opencv.driving.DnnHelper
 import com.argos.android.opencv.lineDetection.windowFinding.LaneFinder
 import com.argos.android.opencv.model.Feature
+import org.opencv.core.CvType
 import org.opencv.core.Mat
+import org.opencv.core.Rect
+import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
 
-class CameraFrameManager(private val mCaller: CameraFrameMangerCaller, private val mFeature: Feature): Thread() {
-
+class CameraFrameManager(private val mCaller: CameraFrameMangerCaller, private val mFeature: String, private val mDnnHelper: DnnHelper) : Thread() {
     private var mLaneFinder = LaneFinder()
     private lateinit var mFrameInfo: Mat
     private lateinit var mDebugImage: Mat
+    private var mDistance: Double = 0.0
     private var mRunning: Boolean = true
+
+    private val mGreyWidth = (CameraActivity.SCREEN_WIDTH - CameraActivity.SCREEN_HEIGHT)/2
 
     fun finish() {
         mRunning = false
@@ -20,7 +26,10 @@ class CameraFrameManager(private val mCaller: CameraFrameMangerCaller, private v
     override fun run() {
         while (mRunning) {
             try {
-                laneDetection(mCaller.getCopyOfCurrentFrame())
+                when (mFeature) {
+                    Feature.LANE_DETECTION -> laneDetection(mCaller.getCopyOfCurrentFrame())
+                    Feature.OVERTAKING -> overTaking(mCaller.getCopyOfCurrentFrame())
+                }
             } catch (e: NoCurrentFrameAvailableException) {
                 sleep(50)
             }
@@ -28,11 +37,21 @@ class CameraFrameManager(private val mCaller: CameraFrameMangerCaller, private v
     }
 
     private fun laneDetection(frame: Mat) {
-//        val (frameInfo, binaryImage) = mFeature.getFrameInfoAndDebugImage(frame)
         val (frameInfo, binaryImage) = mLaneFinder.getLanesAndBinaryImage(frame)
         Imgproc.cvtColor(frameInfo, frameInfo, Imgproc.COLOR_RGB2BGR)
         setFrameInfo(frameInfo.clone())
         binaryImage?.let { setDebugImage(binaryImage.clone()) }
+    }
+
+    private fun overTaking(frame: Mat) {
+        val dnnResponse = mDnnHelper.processMat(frame)
+        mDistance = dnnResponse.distance
+        val frameInfo = dnnResponse.mat
+        val grayImage = Mat(CameraActivity.SCREEN_HEIGHT, mGreyWidth, CvType.CV_8UC3, Scalar(255.0, 0.0, 0.0))
+        grayImage.copyTo(frameInfo.submat(Rect(0, 0, mGreyWidth, CameraActivity.SCREEN_HEIGHT)))
+        grayImage.copyTo(frameInfo.submat(Rect(CameraActivity.SCREEN_WIDTH-mGreyWidth, 0, mGreyWidth, CameraActivity.SCREEN_HEIGHT)))
+        Imgproc.cvtColor(frameInfo, frameInfo, Imgproc.COLOR_RGB2BGR)
+        setFrameInfo(frameInfo.clone())
     }
 
     @Synchronized

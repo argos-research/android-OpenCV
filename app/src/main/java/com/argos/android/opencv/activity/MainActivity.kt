@@ -25,12 +25,10 @@ import com.argos.android.opencv.fragment.ChooseImageDialogFragment
 import com.argos.android.opencv.interfaces.DialogCallback
 import com.argos.android.opencv.interfaces.MainActivityCallback
 import com.argos.android.opencv.model.Feature
-import com.argos.android.opencv.model.FeatureLaneDetection
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
 
@@ -90,8 +88,8 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
     }
 
     private fun initList() {
-        mFeatureList.add(Feature(getString(R.string.feature_overtaking), R.drawable.vehicle_detection_thumbnail))
-        mFeatureList.add(FeatureLaneDetection(getString(R.string.feature_lane_detection), R.drawable.lane_detection_thumbnail))
+        mFeatureList.add(Feature(Feature.OVERTAKING, R.drawable.vehicle_detection_thumbnail))
+        mFeatureList.add(Feature(Feature.LANE_DETECTION, R.drawable.lane_detection_thumbnail))
 
         layoutManager = LinearLayoutManager(this)
         recyclerView!!.layoutManager = layoutManager
@@ -147,7 +145,7 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
     override fun launchCameraDetection(feature: Feature) {
         val intent = Intent(this@MainActivity, CameraActivity::class.java)
         intent.putExtra("cascadeFilePath", cascadeFile!!.absolutePath)
-        intent.putExtra("feature", feature)
+        intent.putExtra("feature", feature.featureName)
         startActivity(intent)
 
     }

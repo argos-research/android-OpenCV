@@ -27,7 +27,7 @@ class LaneFinder {
     fun getLanesAndBinaryImage(image: Mat): Pair<Mat, Mat> {
         checkImage(image)
         val preProcessedImage = preProcessImage(image)
-        val imageLanes = Mat(HEIGHT_IMAGE, WIDTH_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
+        val imageLanes = Mat(HEIGHT_IMAGE, WIDTH_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0,1.0))
         drawLines(imageLanes, preProcessedImage)
         return Pair(imageLanes, preProcessedImage)
     }

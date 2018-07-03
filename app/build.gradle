@@ -28,7 +28,7 @@ android {
     }
     sourceSets { main { jni.srcDirs = [] } }
 
-    task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
+  /*  task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
         commandLine ndkBuildPath,
                 'NDK_PROJECT_PATH=build/intermediates/ndk',
                 'NDK_LIBS_OUT=src/main/jniLibs',
@@ -38,6 +38,7 @@ android {
     tasks.withType(JavaCompile) {
         compileTask -> compileTask.dependsOn ndkBuild
     }
+    */
 }
 
 dependencies {

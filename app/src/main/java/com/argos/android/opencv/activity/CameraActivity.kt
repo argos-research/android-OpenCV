@@ -10,9 +10,6 @@ import android.view.View
 import com.argos.android.opencv.R
 import com.argos.android.opencv.camera.*
 import com.argos.android.opencv.driving.DnnHelper
-import com.argos.android.opencv.model.DnnRespone
-import com.argos.android.opencv.model.Feature
-import com.argos.android.opencv.model.FeatureLaneDetection
 import kotlinx.android.synthetic.main.activity_camera.*
 import org.opencv.android.*
 import org.opencv.core.*
@@ -23,19 +20,15 @@ import kotlin.math.max
 
 class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListener2, CameraFrameMangerCaller {
     companion object {
-//        private const val SCREEN_WIDTH = 640
-//        private const val SCREEN_HEIGHT = 480
-
-        private const val SCREEN_WIDTH = 1280
-        private const val SCREEN_HEIGHT = 720
+        const val SCREEN_WIDTH = 1280
+        const val SCREEN_HEIGHT = 720
     }
 
     private var decorView: View? = null
 
     private var cameraView: CameraBridgeViewBase? = null
 
-//    private var feature: String? = null
-    private lateinit var mFeature: Feature
+    private lateinit var mFeatureString: String
     private var cascadeFilePath: String? = null
 
     private var dnnHelper: DnnHelper = DnnHelper()
@@ -67,8 +60,8 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     }
 
     private fun initExtras() {
-        mFeature = intent.extras!!.getParcelable("feature")
-        cascadeFilePath = intent.extras!!.getString("cascadeFilePath")
+        mFeatureString = intent.getStringExtra("feature")
+        cascadeFilePath = intent.extras.getString("cascadeFilePath")
     }
 
     private fun initView() {
@@ -90,6 +83,8 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
         if (cameraView != null)
             cameraView!!.disableView()
+
+        mCameraFrameManager.finish()
     }
 
     override fun onDestroy() {
@@ -110,7 +105,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, this, loader)
         }
 
-        mCameraFrameManager = CameraFrameManager(this, mFeature)
+        mCameraFrameManager = CameraFrameManager(this, mFeatureString,dnnHelper)
         mCameraFrameManager.start()
     }
 
