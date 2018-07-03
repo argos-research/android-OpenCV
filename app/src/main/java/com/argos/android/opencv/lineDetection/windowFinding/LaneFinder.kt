@@ -8,16 +8,20 @@ class LaneFinderException(message: String) : Exception(message)
 
 class LaneFinder {
     companion object {
-        const val WIDTH_IMAGE = 1280
-        const val HEIGHT_IMAGE = 720
+        const val WIDTH_IMAGE = 640
+        const val HEIGHT_IMAGE = 360
 
-        private const val HEIGHT_CROPPED_IMAGE = 370
+        private const val HEIGHT_CROPPED_IMAGE = 185
 
-        private const val WIDTH_WARPED_IMAGE = 720
-        private const val HEIGHT_WARPED_IMAGE = 720
+        private const val WIDTH_WARPED_IMAGE = 360
+        private const val HEIGHT_WARPED_IMAGE = 360
+        private const val WARPED_SRC_TOP = 300
+        private const val WARPED_SRC_BOTTOM = 50
+        private const val WARPED_DST_TOP = 85
+        private const val WARPED_DST_BOTTOM = 85
     }
 
-    private val mWindowFinder = WindowFinder(64, 64, 16, 128, 20)
+    private val mWindowFinder = WindowFinder(32, 32, 8, 64, 10)
 
     fun getLanes(image: Mat): Mat {
         val (imageLanes, _) = getLanesAndBinaryImage(image)
@@ -66,18 +70,18 @@ class LaneFinder {
     }
 
     private fun getSrcMatrix(): Mat {
-        val leftTop = Point(600.0, 0.0)
-        val rightTop = Point(WIDTH_IMAGE-600.0, 0.0)
-        val rightBottom = Point(WIDTH_IMAGE-100.0, HEIGHT_CROPPED_IMAGE.toDouble())
-        val leftBottom = Point(100.0, HEIGHT_CROPPED_IMAGE.toDouble())
+        val leftTop = Point(WARPED_SRC_TOP.toDouble(), 0.0)
+        val rightTop = Point((WIDTH_IMAGE-WARPED_SRC_TOP).toDouble(), 0.0)
+        val rightBottom = Point((WIDTH_IMAGE- WARPED_SRC_BOTTOM).toDouble(), HEIGHT_CROPPED_IMAGE.toDouble())
+        val leftBottom = Point(WARPED_SRC_BOTTOM.toDouble(), HEIGHT_CROPPED_IMAGE.toDouble())
         return MatOfPoint2f(leftTop, rightTop, rightBottom, leftBottom)
     }
 
     private fun getDstMatrix(): Mat {
-        val leftTop = Point(170.0, 0.0)
-        val rightTop = Point(WIDTH_WARPED_IMAGE-170.0, 0.0)
-        val rightBottom = Point(WIDTH_WARPED_IMAGE-170.0, HEIGHT_WARPED_IMAGE.toDouble())
-        val leftBottom = Point(170.0, HEIGHT_WARPED_IMAGE.toDouble())
+        val leftTop = Point(WARPED_DST_TOP.toDouble(), 0.0)
+        val rightTop = Point((WIDTH_WARPED_IMAGE- WARPED_DST_TOP).toDouble(), 0.0)
+        val rightBottom = Point((WIDTH_WARPED_IMAGE- WARPED_DST_BOTTOM).toDouble(), HEIGHT_WARPED_IMAGE.toDouble())
+        val leftBottom = Point(WARPED_DST_BOTTOM.toDouble(), HEIGHT_WARPED_IMAGE.toDouble())
         return MatOfPoint2f(leftTop, rightTop, rightBottom, leftBottom)
     }
 
