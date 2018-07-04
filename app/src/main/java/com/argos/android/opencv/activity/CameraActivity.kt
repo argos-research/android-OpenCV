@@ -168,7 +168,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setDistance(distance: Double) {
+    override fun setDistance(distance: Double) {
         runOnUiThread {
             if(distance < 0.5)
                 txtDistance.text = "-"

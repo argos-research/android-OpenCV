@@ -52,6 +52,8 @@ class CameraFrameManager(private val mCaller: CameraFrameMangerCaller, private v
         grayImage.copyTo(frameInfo.submat(Rect(CameraActivity.SCREEN_WIDTH-mGreyWidth, 0, mGreyWidth, CameraActivity.SCREEN_HEIGHT)))
         Imgproc.cvtColor(frameInfo, frameInfo, Imgproc.COLOR_RGB2BGR)
         setFrameInfo(frameInfo.clone())
+        mCaller.setDistance(mDistance)
+
     }
 
     @Synchronized
