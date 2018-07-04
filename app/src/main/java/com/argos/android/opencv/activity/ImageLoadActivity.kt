@@ -8,6 +8,7 @@ import android.widget.ImageView
 import com.argos.android.opencv.R
 import com.argos.android.opencv.driving.DnnHelper
 import com.argos.android.opencv.lineDetection.windowFinding.LaneFinder
+import com.argos.android.opencv.model.Feature
 import org.opencv.android.Utils
 import org.opencv.core.Core
 import org.opencv.core.Mat
@@ -70,8 +71,12 @@ class ImageLoadActivity : AppCompatActivity() {
         }
 
         when (feature) {
-            getString(R.string.feature_overtaking) -> image = dnnHelper.processMat(image!!).mat
-            getString(R.string.feature_lane_detection) -> processImageLaneDetection(image!!)
+            Feature.OVERTAKING ->{
+                val imageOvertaking = dnnHelper.processMat(image!!).mat
+                Core.addWeighted(image, 1.0, imageOvertaking, 0.7, 0.0, image)
+
+            }
+            Feature.LANE_DETECTION-> processImageLaneDetection(image!!)
         }
     }
 

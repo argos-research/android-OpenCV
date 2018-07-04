@@ -81,7 +81,7 @@ public class DnnHelper {
         int x1 = (int) (cols - cropSize.width) / 2;
         int x2 = (int) (x1 + cropSize.width);
 
-        Mat retFrame = new Mat(rows, cols, CvType.CV_8UC3, new Scalar(0.0, 0.0, 0.0, 0.0));
+        Mat retFrame = new Mat(rows, cols, CvType.CV_8UC3, new Scalar(0,0,0, 0));
         Mat subFrame = retFrame.submat(y1, y2, x1, x2);
 
 

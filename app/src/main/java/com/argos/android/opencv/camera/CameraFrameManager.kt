@@ -47,7 +47,7 @@ class CameraFrameManager(private val mCaller: CameraFrameMangerCaller, private v
         val dnnResponse = mDnnHelper.processMat(frame)
         mDistance = dnnResponse.distance
         val frameInfo = dnnResponse.mat
-        val grayImage = Mat(CameraActivity.SCREEN_HEIGHT, mGreyWidth, CvType.CV_8UC3, Scalar(255.0, 0.0, 0.0))
+        val grayImage = Mat(CameraActivity.SCREEN_HEIGHT, mGreyWidth, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
         grayImage.copyTo(frameInfo.submat(Rect(0, 0, mGreyWidth, CameraActivity.SCREEN_HEIGHT)))
         grayImage.copyTo(frameInfo.submat(Rect(CameraActivity.SCREEN_WIDTH-mGreyWidth, 0, mGreyWidth, CameraActivity.SCREEN_HEIGHT)))
         Imgproc.cvtColor(frameInfo, frameInfo, Imgproc.COLOR_RGB2BGR)
