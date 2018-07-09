@@ -72,8 +72,12 @@ class ImageLoadActivity : AppCompatActivity() {
         }
 
         when (feature) {
-            Feature.OVERTAKING -> image = dnnHelper.processMat(image!!).mat
-            Feature.LANE_DETECTION -> processImageLaneDetection(image!!)
+            Feature.OVERTAKING ->{
+                val imageOvertaking = dnnHelper.processMat(image!!).mat
+                Core.addWeighted(image, 1.0, imageOvertaking, 0.7, 0.0, image)
+
+            }
+            Feature.LANE_DETECTION-> processImageLaneDetection(image!!)
         }
     }
 

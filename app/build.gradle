@@ -3,8 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
-def ndkBuildPath =  '/Users/patriccorletto/Library/Android/sdk/ndk-bundle/ndk-build'
-
 
 android {
     compileSdkVersion 27
@@ -16,9 +14,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        ndk {
-            abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
-        }
     }
     buildTypes {
         release {
@@ -52,7 +47,12 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation project(':sdkopencv34')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+
+    compile 'com.android.volley:volley:1.1.0'
+
 }
 repositories {
     mavenCentral()
+
 }

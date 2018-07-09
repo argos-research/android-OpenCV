@@ -4,7 +4,10 @@ import org.opencv.core.Mat
 
 interface CameraFrameMangerCaller {
     fun getCopyOfCurrentFrame(): Mat
+    fun setDistance(distance:Double)
+
 }
+
 
 class NoCameraFrameInfoAvailableException(override val message: String): Exception(message)
 

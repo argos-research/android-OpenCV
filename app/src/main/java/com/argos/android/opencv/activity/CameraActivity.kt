@@ -1,21 +1,28 @@
 package com.argos.android.opencv.activity
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.text.InputType
 import android.util.Log
 import android.view.SurfaceView
 import android.view.View
+import android.widget.EditText
 import com.argos.android.opencv.R
 import com.argos.android.opencv.camera.*
 import com.argos.android.opencv.driving.DnnHelper
+import com.argos.android.opencv.model.Feature
 import kotlinx.android.synthetic.main.activity_camera.*
 import org.opencv.android.*
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import java.text.DecimalFormat
 import kotlin.math.max
+
+
 
 
 class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListener2, CameraFrameMangerCaller {
@@ -30,6 +37,8 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     private lateinit var mFeatureString: String
     private var cascadeFilePath: String? = null
+
+    private lateinit var mServerString: String
 
     private var dnnHelper: DnnHelper = DnnHelper()
 
@@ -111,7 +120,10 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     override fun onCameraViewStarted(width: Int, height: Int) {
         cameraView!!.enableFpsMeter()
-        dnnHelper.onCameraViewStarted(this)
+        if(mFeatureString == Feature.OVERTAKING) {
+            showInputDialouge()
+            dnnHelper.onCameraViewStarted(this)
+        }
     }
 
     override fun onCameraViewStopped() {
@@ -167,8 +179,25 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         }
     }
 
+    private fun showInputDialouge(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Title")
+
+        // Set up the input
+        val input = EditText(this)
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        builder.setView(input)
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which -> mServerString = input.text.toString() })
+        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
+
+        builder.show()
+    }
+
     @SuppressLint("SetTextI18n")
-    private fun setDistance(distance: Double) {
+    override fun setDistance(distance: Double) {
         runOnUiThread {
             if(distance < 0.5)
                 txtDistance.text = "-"
