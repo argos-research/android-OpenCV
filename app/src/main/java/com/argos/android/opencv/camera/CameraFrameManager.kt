@@ -2,7 +2,7 @@ package com.argos.android.opencv.camera
 
 import com.argos.android.opencv.activity.CameraActivity
 import com.argos.android.opencv.driving.DnnHelper
-import com.argos.android.opencv.lineDetection.windowFinding.LaneFinder
+import com.argos.android.opencv.lineDetection.LaneFinder
 import com.argos.android.opencv.model.Feature
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc

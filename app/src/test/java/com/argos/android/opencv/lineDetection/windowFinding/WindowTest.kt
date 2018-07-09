@@ -1,7 +1,5 @@
 package com.argos.android.opencv.lineDetection.windowFinding
 
-import com.argos.android.opencv.lineDetection.windowFinding.Window
-import com.argos.android.opencv.lineDetection.windowFinding.WindowException
 import org.junit.Test
 import org.junit.Assert.*
 import org.opencv.core.Point

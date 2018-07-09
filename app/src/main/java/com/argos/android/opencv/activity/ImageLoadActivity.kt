@@ -4,11 +4,10 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.widget.ImageView
 import com.argos.android.opencv.R
 import com.argos.android.opencv.driving.DnnHelper
-import com.argos.android.opencv.lineDetection.windowFinding.LaneFinder
+import com.argos.android.opencv.lineDetection.LaneFinder
 import com.argos.android.opencv.model.Feature
 import org.opencv.android.Utils
 import org.opencv.core.Core
