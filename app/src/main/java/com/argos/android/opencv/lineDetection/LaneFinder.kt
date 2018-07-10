@@ -58,6 +58,7 @@ class LaneFinder {
 
     private fun preProcessImage(image: Mat): Mat {
         val croppedImage = cropImage(image)
+        // ToDo: Try to change warp and threshold
         Imgproc.GaussianBlur(croppedImage, croppedImage, Size(3.0, 3.0), 0.0)
         Imgproc.threshold(croppedImage, croppedImage, 120.0, 255.0, Imgproc.THRESH_BINARY)
         warpImage(croppedImage)
