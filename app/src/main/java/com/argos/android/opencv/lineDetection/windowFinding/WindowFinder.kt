@@ -157,12 +157,14 @@ class WindowFinder(
         windows.add(window)
 
         if (isWindowTouchingTheImageBorder(window)) {
-            val windowBorder = Window(window.getX(), window.getWidth(), window.getY()-1, 1, mImage)
             try {
-                minimizeWindowWidth(windowBorder)
-                maximizeWindowHeightEnlargeAbove(windowBorder)
-                windows.add(windowBorder)
-            } catch (e: NoWindowFoundException) { }
+                val windowBorder = Window(window.getX(), window.getWidth(), window.getY() - 1, 1, mImage)
+                try {
+                    minimizeWindowWidth(windowBorder)
+                    maximizeWindowHeightEnlargeAbove(windowBorder)
+                    windows.add(windowBorder)
+                } catch (e: NoWindowFoundException) { }
+            } catch (e: WindowException) { }
             throw LastWindowFoundException()
         }
     }
