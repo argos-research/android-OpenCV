@@ -184,6 +184,38 @@ class WindowTest {
     }
 
     @Test
+    fun testGetMidpointAbove() {
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7
+                intArrayOf(0, 0, 0, 1, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 1, 1, 1, 0), // 2
+                intArrayOf(0, 0, 0, 0, 1, 1, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 1, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 1, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)  // 6
+        ))
+        val window = Window(2, 6, 0, 7, image)
+        assertEquals(Point(3.0, 0.0), window.getMidpointAbove())
+    }
+
+    @Test
+    fun testGetMidpointBelow() {
+        val image = createBinaryImage(arrayOf(
+                //         0  1  2  3  4  5  6  7
+                intArrayOf(0, 0, 0, 1, 0, 0, 0, 0), // 0
+                intArrayOf(0, 0, 0, 0, 0, 0, 0, 0), // 1
+                intArrayOf(0, 0, 0, 0, 1, 1, 1, 0), // 2
+                intArrayOf(0, 0, 0, 0, 1, 1, 0, 0), // 3
+                intArrayOf(0, 0, 0, 0, 1, 0, 0, 0), // 4
+                intArrayOf(0, 0, 0, 0, 1, 0, 0, 0), // 5
+                intArrayOf(0, 0, 0, 0, 0, 0, 1, 0)  // 6
+        ))
+        val window = Window(2, 6, 0, 7, image)
+        assertEquals(Point(6.0, 6.0), window.getMidpointBelow())
+    }
+
+    @Test
     fun testGetBorderRight() {
         val window = Window(2, 2, 1, 1, BinaryImageEmptyWrapper(10, 10))
         assertEquals(3, window.getBorderRight())

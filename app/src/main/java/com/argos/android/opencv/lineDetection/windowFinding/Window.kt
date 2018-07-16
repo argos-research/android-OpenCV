@@ -146,6 +146,22 @@ class Window(x: Int, width: Int, y: Int, height: Int, private var mBinaryImage: 
         return mY + (mHeight.toDouble()/2)
     }
 
+    fun getMidpointAbove(): Point {
+        if (mHeight < 3)
+            throw WindowException("Height must be higher 2")
+        val window = Window(mX, mWidth, mY, 1, mBinaryImage)
+        minimizeWindowWidth(window)
+        return Point(window.getMidpointX().toDouble(), window.getY().toDouble())
+    }
+
+    fun getMidpointBelow(): Point {
+        if (mHeight < 3)
+            throw WindowException("Height must be higher 2")
+        val window = Window(mX, mWidth, getBorderBelow(), 1, mBinaryImage)
+        minimizeWindowWidth(window)
+        return Point(window.getMidpointX().toDouble(), window.getY().toDouble())
+    }
+
     fun getBorderRight(): Int {
         return mX + mWidth - 1
     }

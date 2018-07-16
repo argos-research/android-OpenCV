@@ -1,9 +1,7 @@
 package com.argos.android.opencv.lineDetection
 
-import com.argos.android.opencv.lineDetection.windowFinding.BinaryImageMatWrapper
-import com.argos.android.opencv.lineDetection.windowFinding.NoWindowFoundException
-import com.argos.android.opencv.lineDetection.windowFinding.Window
-import com.argos.android.opencv.lineDetection.windowFinding.WindowFinder
+import android.util.Log
+import com.argos.android.opencv.lineDetection.windowFinding.*
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import kotlin.collections.ArrayList
@@ -36,9 +34,9 @@ class LaneFinder {
     fun getLanesAndBinaryImage(image: Mat): Pair<Mat, Mat> {
         checkImage(image)
         val preProcessedImage = preProcessImage(image)
-        val imageLanes = Mat(HEIGHT_IMAGE, WIDTH_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0,1.0))
+        val imageLanes = Mat(HEIGHT_IMAGE, WIDTH_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0, 1.0))
         try {
-            val windows = mWindowFinder.findWindows(BinaryImageMatWrapper(preProcessedImage, 250))
+            val windows = mWindowFinder.findWindows(BinaryImageMatWrapper(preProcessedImage.clone(), 250))
             drawLinesOnPreprocessedImage(preProcessedImage, windows)
             drawLinesOnBlackOriginalImage(imageLanes, windows)
         } catch (e: NoWindowFoundException) {
@@ -104,7 +102,7 @@ class LaneFinder {
     }
 
     private fun drawLinesOnBlackOriginalImage(image: Mat, windows: Pair<ArrayList<Window>, ArrayList<Window>>) {
-        val croppedPart = Mat(HEIGHT_WARPED_IMAGE, WIDTH_WARPED_IMAGE, CvType.CV_8UC3, Scalar(0.0,0.0,0.0))
+        val croppedPart = Mat(HEIGHT_WARPED_IMAGE, WIDTH_WARPED_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
         drawLine(croppedPart, windows.first)
         drawLine(croppedPart, windows.second)
         invWarpImage(croppedPart)
@@ -112,14 +110,28 @@ class LaneFinder {
     }
 
     private fun drawLine(image: Mat, windows: ArrayList<Window>) {
-        if (windows.size > 1) {
-            windows.sortBy { window -> window.getMidpointY() }
-            val x = windows.map { window -> window.getMidpointX().toFloat() }
-            val y = windows.map { window -> window.getMidpointY().toFloat() }
+        val points = getPoints(windows)
+        if (points.size >= 2) {
+            val x = points.map { point -> point.x.toFloat() }
+            val y = points.map { point -> point.y.toFloat() }
             val cubicSpline = SplineInterpolator.createMonotoneCubicSpline(y, x)
             for (i in (y.min()!!.toInt()..y.max()!!.toInt()))
             // ToDo: PreProcessed-Image and the original-black-image don't have the same color specter
                 Imgproc.circle(image, Point(cubicSpline.interpolate(i.toFloat()).toDouble(), i.toDouble()), 2, Scalar(0.0, 255.0, 0.0), 2)
         }
+    }
+
+    private fun getPoints(windows: ArrayList<Window>): ArrayList<Point> {
+        windows.sortBy { window -> window.getMidpointY() }
+        val points = ArrayList<Point>()
+
+        for (i in 0..(windows.lastIndex-1))
+            points.add(windows[i].getMidpoint())
+
+        try { points.add(windows[windows.lastIndex].getMidpointAbove()) } catch (e: WindowException) { }
+        points.add(windows[windows.lastIndex].getMidpoint())
+        try { points.add(windows[windows.lastIndex].getMidpointBelow()) } catch (e: WindowException) { }
+
+        return points
     }
 }
