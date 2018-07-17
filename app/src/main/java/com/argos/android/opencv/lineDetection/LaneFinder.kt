@@ -123,6 +123,7 @@ class LaneFinder {
             val cubicSpline = SplineInterpolator.createMonotoneCubicSpline(y, x)
             for (i in (y.min()!!.toInt()..y.max()!!.toInt()))
                 line.add(Point(cubicSpline.interpolate(i.toFloat()).toDouble(), i.toDouble()))
+            line.add(Point(cubicSpline.interpolate(y.max()!!.toFloat()).toDouble(), HEIGHT_WARPED_IMAGE.toDouble()))
         }
         return line
     }
