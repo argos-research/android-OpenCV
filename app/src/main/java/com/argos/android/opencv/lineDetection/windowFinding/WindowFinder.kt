@@ -67,7 +67,6 @@ class WindowFinder(
         return startWindow
     }
 
-    // ToDo: move to window optimizer
     private fun moveWindowLeftUntilMinNumberPixelInWindowFound(window: Window) {
         while(window.getPixelInWindow() < mMinNumberPixelForWindow) {
             try {
@@ -114,7 +113,6 @@ class WindowFinder(
         return startWindow
     }
 
-    // ToDo: move to window optimizer
     private fun moveWindowRightUntilMinNumberPixelInWindowFound(window: Window) {
         while(window.getPixelInWindow() < mMinNumberPixelForWindow) {
             try {
@@ -141,11 +139,14 @@ class WindowFinder(
         try {
             addNextWindow(windows, 0)
         } catch (e: NoWindowFoundException) {
-            try {
-                addNextWindow(windows, 1)
-            } catch (e: NoWindowFoundException) {
+            if (windows.minBy { window -> window.getY() }!!.getY() < mImage.getHeight()/2)
+                try {
+                    addNextWindow(windows, 1)
+                } catch (e: NoWindowFoundException) {
+                    throw LastWindowFoundException()
+                }
+            else
                 throw LastWindowFoundException()
-            }
         }
     }
 
