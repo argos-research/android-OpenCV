@@ -1,5 +1,6 @@
 package com.argos.android.opencv.lineDetection.windowFinding
 
+import android.util.Log
 import org.opencv.core.Point
 import kotlin.math.roundToInt
 
@@ -13,7 +14,8 @@ class WindowFinder(
     private var mHeightWindow: Int,
     private var mWidthStartWindow: Int,
     private var mHeightStartWindow: Int,
-    private var mMinNumberPixelForWindow: Int) {
+    private var mMinNumberPixelForWindow: Int,
+    private var mMaxWindowWith: Int) {
 
     private lateinit var mImage: BinaryImage
 
@@ -151,8 +153,20 @@ class WindowFinder(
     }
 
     private fun addNextWindow(windows: ArrayList<Window>, iteration: Int) {
-        val window = getWindowAtNextPosition(windows, iteration)
-        maximizeWindowWidth(window)
+        var window = getWindowAtNextPosition(windows, iteration)
+        try {
+            maximizeWindowWidth(window, mMaxWindowWith)
+        } catch (e: WindowWithToBigException) {
+            Log.d(WindowFinder::class.java.simpleName, "WindowWithToBig")
+            window = getWindowAtNextPosition(windows, iteration)
+            window.setY(window.getY() + window.getHeight()/2)
+            window.setHeight(window.getHeight()/2)
+            try {
+                maximizeWindowWidth(window, mMaxWindowWith)
+            } catch (e: WindowWithToBigException) {
+                throw LastWindowFoundException()
+            }
+        }
         minimizeWindowWidth(window)
         minimizeWindowHeight(window)
         windows.add(window)

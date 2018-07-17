@@ -8,10 +8,9 @@ import kotlin.collections.ArrayList
 class LaneFinderException(message: String) : Exception(message)
 
 /*
- ToDo: Sobald ein Window über eine gewisse Breite geht (starke Links oder Rechtskurve), sollte das Fenster in der Mitte geteilt werden, ansonsten können leicht Pixel aus dem Rand verwendet werden
- ToDo: Canny-Edge-Detection versuchen
- ToDo: Eine Maximale Window-Width einfügen. Falls ein Window zu groß ist, ist es meistens Rauschen und ein Fehler
  ToDo: Auf einigen Tracks sind die Abstände bei den Linen weiter entfernt. Neue Justierung überlegen
+ ToDo: Bilder, welche nicht von mir sind werfen einen Fehler
+ ToDo: Im Camera-Modus gibt es einen Fehler, wenn man den Screen sperrt und dann wieder in die App geht
  */
 class LaneFinder {
     companion object {
@@ -34,7 +33,7 @@ class LaneFinder {
         private const val THRESH_OVER_AVG = 10
     }
 
-    private val mWindowFinder = WindowFinder(32, 32, 8, 64, 10)
+    private val mWindowFinder = WindowFinder(32, 32, 8, 64, 10, 64)
 
     fun getLanesAndBinaryImage(image: Mat): Pair<Mat, Mat> {
         checkImage(image)

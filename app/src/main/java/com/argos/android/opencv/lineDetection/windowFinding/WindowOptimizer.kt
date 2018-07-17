@@ -1,17 +1,22 @@
 package com.argos.android.opencv.lineDetection.windowFinding
 
 
-fun maximizeWindowWidth(window: Window) {
-    maximizeWindowWidthEnlargeLeft(window)
-    maximizeWindowWidthEnlargeRight(window)
+class WindowWithToBigException: Exception()
+
+
+fun maximizeWindowWidth(window: Window, maxWidth: Int = Int.MAX_VALUE) {
+    maximizeWindowWidthEnlargeLeft(window, maxWidth)
+    maximizeWindowWidthEnlargeRight(window, maxWidth)
 }
 
-fun maximizeWindowWidthEnlargeLeft(window: Window) {
+fun maximizeWindowWidthEnlargeLeft(window: Window, maxWidth: Int = Int.MAX_VALUE) {
     if (window.getPixelInWindow() == 0)
         throw NoWindowFoundException("There aren't any Pixel in Window")
 
     var prevPixelInWindow = window.getPixelInWindow()
-    while (true){
+    while (true) {
+        if (window.getWidth() > maxWidth)
+            throw WindowWithToBigException()
         try {
             window.decreaseX()
             window.increaseWidth()
@@ -28,12 +33,14 @@ fun maximizeWindowWidthEnlargeLeft(window: Window) {
     }
 }
 
-fun maximizeWindowWidthEnlargeRight(window: Window) {
+fun maximizeWindowWidthEnlargeRight(window: Window, maxWidth: Int = Int.MAX_VALUE) {
     if (window.getPixelInWindow() == 0)
         throw NoWindowFoundException("There aren't any Pixel in Window")
 
     var prevPixelInWindow = window.getPixelInWindow()
     while (true) {
+        if (window.getWidth() > maxWidth)
+            throw WindowWithToBigException()
         try {
             window.increaseWidth()
             if (window.getPixelInWindow() > prevPixelInWindow) {
