@@ -7,7 +7,13 @@ import kotlin.collections.ArrayList
 
 class LaneFinderException(message: String) : Exception(message)
 
-
+/*
+ ToDo: Sobald ein Window über eine gewisse Breite geht (starke Links oder Rechtskurve), sollte das Fenster in der Mitte geteilt werden, ansonsten können leicht Pixel aus dem Rand verwendet werden
+ ToDo: Canny-Edge-Detection versuchen
+ ToDo: Eine Maximale Window-Width einfügen. Falls ein Window zu groß ist, ist es meistens Rauschen und ein Fehler
+ ToDo: Ich glaube Warp funktioniert nicht richtg (Kommt mir etwas rechtslastig vor)
+ ToDo: Auf einigen Tracks sind die Abstände bei den Linen weiter entfernt. Neue Justierung überlegen
+ */
 class LaneFinder {
     companion object {
         const val WIDTH_IMAGE = 640
@@ -27,11 +33,6 @@ class LaneFinder {
 
     private val mWindowFinder = WindowFinder(32, 32, 8, 64, 10)
 
-    fun getLanes(image: Mat): Mat {
-        val (imageLanes, _) = getLanesAndBinaryImage(image)
-        return imageLanes
-    }
-
     fun getLanesAndBinaryImage(image: Mat): Pair<Mat, Mat> {
         checkImage(image)
         val preProcessedImage = preProcessImage(image)
@@ -39,6 +40,8 @@ class LaneFinder {
         try {
             val windows = mWindowFinder.findWindows(BinaryImageMatWrapper(preProcessedImage.clone(), 250))
             drawLinesOnPreprocessedImage(preProcessedImage, windows)
+            drawWindows(preProcessedImage, windows.first)
+            drawWindows(preProcessedImage, windows.second)
             drawLinesOnBlackOriginalImage(imageLanes, windows)
         } catch (e: NoWindowFoundException) {
             Imgproc.cvtColor(preProcessedImage, preProcessedImage, Imgproc.COLOR_GRAY2BGR)
@@ -83,7 +86,6 @@ class LaneFinder {
         }
 
         var threshValue = values.average() + 10
-        Log.d(LaneFinder::class.java.simpleName, "threshValue: $threshValue")
         if (threshValue < 80)
             threshValue = 80.0
         if (threshValue > 150)
@@ -164,5 +166,14 @@ class LaneFinder {
         try { points.add(windows[windows.lastIndex].getMidpointBelow()) } catch (e: WindowException) { }
 
         return points
+    }
+
+    private fun drawWindows(image: Mat, windows: ArrayList<Window>) {
+        for (window in windows)
+            Imgproc.rectangle(
+                    image,
+                    Point(window.getX().toDouble(), window.getY().toDouble()),
+                    Point(window.getBorderRight().toDouble(), window.getBorderBelow().toDouble()),
+                    Scalar(0.0, 0.0, 255.0))
     }
 }

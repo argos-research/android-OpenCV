@@ -10,11 +10,10 @@ import com.argos.android.opencv.driving.DnnHelper
 import com.argos.android.opencv.lineDetection.LaneFinder
 import com.argos.android.opencv.model.Feature
 import org.opencv.android.Utils
-import org.opencv.core.Core
-import org.opencv.core.Mat
-import org.opencv.core.Size
+import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import java.io.IOException
+import kotlin.math.max
 
 /**
  * Activity to run the OpenCV algorithm on images
@@ -82,8 +81,13 @@ class ImageLoadActivity : AppCompatActivity() {
 
     private fun processImageLaneDetection(img: Mat) {
         Imgproc.resize(img, img, Size(LaneFinder.WIDTH_IMAGE.toDouble(), LaneFinder.HEIGHT_IMAGE.toDouble()))
-        val imageLanes = laneFinder.getLanes(img.clone())
-        Core.addWeighted(img, 1.0, imageLanes, 0.7, 0.0, image)
+        val (imageLanes, binaryImage) = laneFinder.getLanesAndBinaryImage(img.clone())
+
+        Core.addWeighted(img, 1.0, imageLanes, 0.7, 0.0, imageLanes)
+        val displayedImage = Mat(Size((imageLanes.width() + binaryImage.width()).toDouble(), max(imageLanes.height(), binaryImage.height()).toDouble()), CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
+        imageLanes.copyTo(displayedImage.submat(Rect(0, 0, imageLanes.width(), imageLanes.height())))
+        binaryImage.copyTo(displayedImage.submat(Rect(imageLanes.width(), 0, binaryImage.width(), binaryImage.height())))
+        image = displayedImage
     }
 
     private fun setImage() {
