@@ -23,8 +23,6 @@ import java.text.DecimalFormat
 import kotlin.math.max
 
 
-
-
 class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListener2, CameraFrameMangerCaller {
     companion object {
         const val SCREEN_WIDTH = 1280

@@ -42,7 +42,7 @@ class CameraFrameManager(private val mCaller: CameraFrameMangerCaller, private v
         setFrameInfo(frameInfo.clone())
 
         Imgproc.resize(binaryImage, binaryImage, Size(CameraActivity.SCREEN_HEIGHT.toDouble(), CameraActivity.SCREEN_HEIGHT.toDouble()))
-        binaryImage?.let { setDebugImage(binaryImage.clone()) }
+        binaryImage.let { setDebugImage(binaryImage.clone()) }
     }
 
     private fun overTaking(frame: Mat) {

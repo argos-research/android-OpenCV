@@ -11,7 +11,6 @@ class LaneFinderException(message: String) : Exception(message)
  ToDo: Sobald ein Window über eine gewisse Breite geht (starke Links oder Rechtskurve), sollte das Fenster in der Mitte geteilt werden, ansonsten können leicht Pixel aus dem Rand verwendet werden
  ToDo: Canny-Edge-Detection versuchen
  ToDo: Eine Maximale Window-Width einfügen. Falls ein Window zu groß ist, ist es meistens Rauschen und ein Fehler
- ToDo: Ich glaube Warp funktioniert nicht richtg (Kommt mir etwas rechtslastig vor)
  ToDo: Auf einigen Tracks sind die Abstände bei den Linen weiter entfernt. Neue Justierung überlegen
  */
 class LaneFinder {
@@ -23,12 +22,16 @@ class LaneFinder {
 
         private const val WIDTH_WARPED_IMAGE = 360
         private const val HEIGHT_WARPED_IMAGE = 360
+
         private const val WARPED_SRC_TOP = 300
         private const val WARPED_SRC_BOTTOM = 50
         private const val WARPED_DST_TOP = 85
         private const val WARPED_DST_BOTTOM = 85
-        private const val WIDTH_RECT_THRESH = 111
-        private const val HEIGHT_RECT_THRESH = 71
+
+        private const val WIDTH_RECT_THRESH = 181
+        private const val HEIGHT_RECT_THRESH = 101
+
+        private const val THRESH_OVER_AVG = 10
     }
 
     private val mWindowFinder = WindowFinder(32, 32, 8, 64, 10)
@@ -74,23 +77,18 @@ class LaneFinder {
 
     private fun getThreshValue(image: Mat): Double {
         val values = ArrayList<Double>()
-        val subImage = image.submat(Rect(WIDTH_WARPED_IMAGE/2 - WIDTH_RECT_THRESH, HEIGHT_WARPED_IMAGE- HEIGHT_RECT_THRESH, WIDTH_RECT_THRESH, HEIGHT_RECT_THRESH))
+        val subImage = image.submat(Rect(WIDTH_WARPED_IMAGE/2 - WIDTH_RECT_THRESH/2, HEIGHT_WARPED_IMAGE- HEIGHT_RECT_THRESH, WIDTH_RECT_THRESH, HEIGHT_RECT_THRESH))
         for (x in 0..(subImage.width()-1) step 10)
             for (y in 0..(subImage.height()-1) step 10)
                 values.add(subImage.get(y, x).average())
 
         values.sort()
-        for (i in 0..3) {
+        for (i in 0..values.size/30)
             values.removeAt(values.lastIndex)
+        for (i in 0..values.size*3/4)
             values.removeAt(0)
-        }
 
-        var threshValue = values.average() + 10
-        if (threshValue < 80)
-            threshValue = 80.0
-        if (threshValue > 150)
-            threshValue = 150.0
-        return  threshValue
+        return values.average() + THRESH_OVER_AVG
     }
 
     private fun warpImage(image: Mat) {
@@ -120,8 +118,11 @@ class LaneFinder {
     }
 
     private fun drawLinesOnPreprocessedImage(preProcessedImage: Mat, windows: Pair<ArrayList<Window>, ArrayList<Window>>) {
+        val croppedPart = Mat(HEIGHT_WARPED_IMAGE, WIDTH_WARPED_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
+        drawLane(croppedPart, windows.first, windows.second)
+
         Imgproc.cvtColor(preProcessedImage, preProcessedImage, Imgproc.COLOR_GRAY2BGR)
-        drawLane(preProcessedImage, windows.first, windows.second)
+        Core.addWeighted(preProcessedImage, 1.0, croppedPart, 0.7, 0.0, preProcessedImage)
     }
 
     private fun drawLinesOnBlackOriginalImage(image: Mat, windows: Pair<ArrayList<Window>, ArrayList<Window>>) {
