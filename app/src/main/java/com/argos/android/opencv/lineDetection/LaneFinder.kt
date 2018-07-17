@@ -1,6 +1,5 @@
 package com.argos.android.opencv.lineDetection
 
-import android.util.Log
 import com.argos.android.opencv.lineDetection.windowFinding.*
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
@@ -97,28 +96,36 @@ class LaneFinder {
 
     private fun drawLinesOnPreprocessedImage(preProcessedImage: Mat, windows: Pair<ArrayList<Window>, ArrayList<Window>>) {
         Imgproc.cvtColor(preProcessedImage, preProcessedImage, Imgproc.COLOR_GRAY2BGR)
-        drawLine(preProcessedImage, windows.first)
-        drawLine(preProcessedImage, windows.second)
+        drawLane(preProcessedImage, windows.first, windows.second)
     }
 
     private fun drawLinesOnBlackOriginalImage(image: Mat, windows: Pair<ArrayList<Window>, ArrayList<Window>>) {
         val croppedPart = Mat(HEIGHT_WARPED_IMAGE, WIDTH_WARPED_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
-        drawLine(croppedPart, windows.first)
-        drawLine(croppedPart, windows.second)
+        drawLane(croppedPart, windows.first, windows.second)
         invWarpImage(croppedPart)
         croppedPart.copyTo(image.submat(Rect(0, HEIGHT_IMAGE - HEIGHT_CROPPED_IMAGE, WIDTH_IMAGE, HEIGHT_CROPPED_IMAGE)))
     }
 
-    private fun drawLine(image: Mat, windows: ArrayList<Window>) {
+    private fun drawLane(image: Mat, windowsLeft: ArrayList<Window>, windowsRight: ArrayList<Window>) {
+        val lineLeft = getLine(windowsLeft)
+        lineLeft.sortBy { point -> point.y }
+        val lineRight = getLine(windowsRight)
+        lineRight.sortByDescending { point -> point.y }
+        val points = MatOfPoint(*(lineLeft+lineRight).toTypedArray())
+        Imgproc.fillConvexPoly(image, points, Scalar(0.0, 255.0, 0.0))
+    }
+
+    private fun getLine(windows: ArrayList<Window>): ArrayList<Point> {
         val points = getPoints(windows)
+        val line = ArrayList<Point>()
         if (points.size >= 2) {
             val x = points.map { point -> point.x.toFloat() }
             val y = points.map { point -> point.y.toFloat() }
             val cubicSpline = SplineInterpolator.createMonotoneCubicSpline(y, x)
             for (i in (y.min()!!.toInt()..y.max()!!.toInt()))
-            // ToDo: PreProcessed-Image and the original-black-image don't have the same color specter
-                Imgproc.circle(image, Point(cubicSpline.interpolate(i.toFloat()).toDouble(), i.toDouble()), 2, Scalar(0.0, 255.0, 0.0), 2)
+                line.add(Point(cubicSpline.interpolate(i.toFloat()).toDouble(), i.toDouble()))
         }
+        return line
     }
 
     private fun getPoints(windows: ArrayList<Window>): ArrayList<Point> {
