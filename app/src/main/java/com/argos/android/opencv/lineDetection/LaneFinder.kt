@@ -21,6 +21,8 @@ class LaneFinder {
         private const val WARPED_SRC_BOTTOM = 50
         private const val WARPED_DST_TOP = 85
         private const val WARPED_DST_BOTTOM = 85
+        private const val WIDTH_RECT_THRESH = 111
+        private const val HEIGHT_RECT_THRESH = 71
     }
 
     private val mWindowFinder = WindowFinder(32, 32, 8, 64, 10)
@@ -57,7 +59,7 @@ class LaneFinder {
         val croppedImage = cropImage(image)
         Imgproc.GaussianBlur(croppedImage, croppedImage, Size(3.0, 3.0), 0.0)
         warpImage(croppedImage)
-        Imgproc.threshold(croppedImage, croppedImage, 120.0, 255.0, Imgproc.THRESH_BINARY)
+        Imgproc.threshold(croppedImage, croppedImage, getThreshValue(croppedImage), 255.0, Imgproc.THRESH_BINARY)
         Imgproc.cvtColor(croppedImage, croppedImage, Imgproc.COLOR_BGR2GRAY)
         return croppedImage
     }
@@ -65,6 +67,28 @@ class LaneFinder {
     private fun cropImage(image: Mat): Mat {
         val rectCrop = Rect(0, HEIGHT_IMAGE - HEIGHT_CROPPED_IMAGE, WIDTH_IMAGE, HEIGHT_CROPPED_IMAGE)
         return image.submat(rectCrop)
+    }
+
+    private fun getThreshValue(image: Mat): Double {
+        val values = ArrayList<Double>()
+        val subImage = image.submat(Rect(WIDTH_WARPED_IMAGE/2 - WIDTH_RECT_THRESH, HEIGHT_WARPED_IMAGE- HEIGHT_RECT_THRESH, WIDTH_RECT_THRESH, HEIGHT_RECT_THRESH))
+        for (x in 0..(subImage.width()-1) step 10)
+            for (y in 0..(subImage.height()-1) step 10)
+                values.add(subImage.get(y, x).average())
+
+        values.sort()
+        for (i in 0..3) {
+            values.removeAt(values.lastIndex)
+            values.removeAt(0)
+        }
+
+        var threshValue = values.average() + 10
+        Log.d(LaneFinder::class.java.simpleName, "threshValue: $threshValue")
+        if (threshValue < 80)
+            threshValue = 80.0
+        if (threshValue > 150)
+            threshValue = 150.0
+        return  threshValue
     }
 
     private fun warpImage(image: Mat) {
