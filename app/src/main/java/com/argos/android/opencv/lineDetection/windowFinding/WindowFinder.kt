@@ -139,7 +139,7 @@ class WindowFinder(
         try {
             addNextWindow(windows, 0)
         } catch (e: NoWindowFoundException) {
-            if (windows.minBy { window -> window.getY() }!!.getY() < mImage.getHeight()/2)
+            if (windows.minBy { window -> window.getY() }!!.getY() > mImage.getHeight()/2)
                 try {
                     addNextWindow(windows, 1)
                 } catch (e: NoWindowFoundException) {
