@@ -159,8 +159,8 @@ class WindowFinder(
         } catch (e: WindowWithToBigException) {
             Log.d(WindowFinder::class.java.simpleName, "WindowWithToBig")
             window = getWindowAtNextPosition(windows, iteration)
-            window.setY(window.getY() + window.getHeight()/2)
             window.setHeight(window.getHeight()/2)
+            window.setY(window.getY() + window.getHeight())
             try {
                 maximizeWindowWidth(window, mMaxWindowWith)
             } catch (e: WindowWithToBigException) {
