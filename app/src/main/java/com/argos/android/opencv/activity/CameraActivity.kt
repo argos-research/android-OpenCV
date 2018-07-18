@@ -112,7 +112,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, this, loader)
         }
 
-        mCameraFrameManager = CameraFrameManager(this, mFeatureString,dnnHelper)
+        mCameraFrameManager = CameraFrameManager(this, mFeatureString, dnnHelper)
         mCameraFrameManager.start()
     }
 

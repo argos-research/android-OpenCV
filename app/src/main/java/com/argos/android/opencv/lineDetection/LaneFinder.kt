@@ -9,8 +9,8 @@ class LaneFinderException(message: String) : Exception(message)
 
 /*
  ToDo: Auf einigen Tracks sind die Abstände bei den Linen weiter entfernt. Neue Justierung überlegen
- ToDo: Bilder, welche nicht von mir sind werfen einen Fehler
  ToDo: Im Camera-Modus gibt es einen Fehler, wenn man den Screen sperrt und dann wieder in die App geht
+ ToDo: Canny-Edge-Detection verwenden, da es bei stark verschmutzten strecken schwer ist etwas zu erkennen mit Threshold
  */
 class LaneFinder {
     companion object {
@@ -137,7 +137,7 @@ class LaneFinder {
         val lineRight = getLine(windowsRight)
         lineRight.sortByDescending { point -> point.y }
         val points = MatOfPoint(*(lineLeft+lineRight).toTypedArray())
-        Imgproc.fillConvexPoly(image, points, Scalar(0.0, 255.0, 0.0))
+        try { Imgproc.fillConvexPoly(image, points, Scalar(0.0, 255.0, 0.0)) } catch (e: CvException) {}
     }
 
     private fun getLine(windows: ArrayList<Window>): ArrayList<Point> {
