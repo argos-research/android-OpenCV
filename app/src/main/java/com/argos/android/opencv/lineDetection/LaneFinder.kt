@@ -4,7 +4,6 @@ import com.argos.android.opencv.lineDetection.windowFinding.*
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import kotlin.collections.ArrayList
-import kotlin.math.max
 
 class LaneFinderException(message: String) : Exception(message)
 
@@ -32,27 +31,27 @@ class LaneFinder {
         private const val HEIGHT_RECT_THRESH = 101
 
         private const val THRESH_OVER_AVG = 10
+        private const val THRESH_BINARY_IMAGE_THRESHOLD = 250
+        private const val THRESH_BINARY_IMAGE_CANNY = 10
     }
 
     private val mWindowFinder = WindowFinder(32, 32, 8, 64, 10, 64)
 
     fun getLanesAndBinaryImage(image: Mat): Pair<Mat, Mat> {
         checkImage(image)
-        val preProcessedImage = preProcessImage(image)
-        val imageLanes = Mat(HEIGHT_IMAGE, WIDTH_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0, 1.0))
+        var preProcessedImage = preProcessImageThreshold(image)
+        val imageLane = Mat(HEIGHT_IMAGE, WIDTH_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0, 1.0))
         try {
-            val windows = mWindowFinder.findWindows(BinaryImageMatWrapper(preProcessedImage.clone(), 250))
-            Imgproc.cvtColor(preProcessedImage, preProcessedImage, Imgproc.COLOR_GRAY2BGR)
-            drawWindows(preProcessedImage, windows.first)
-            drawWindows(preProcessedImage, windows.second)  
-            if (windows.first.size >= 2 && windows.second.size >= 2) {
-                drawLinesOnPreprocessedImage(preProcessedImage, windows)
-                drawLinesOnBlackOriginalImage(imageLanes, windows)
-            }
+            findAndDrawLane(imageLane, preProcessedImage, THRESH_BINARY_IMAGE_THRESHOLD)
         } catch (e: NoWindowFoundException) {
-            Imgproc.cvtColor(preProcessedImage, preProcessedImage, Imgproc.COLOR_GRAY2BGR)
+            preProcessedImage = preProcessImageCanny(image)
+            try {
+                findAndDrawLane(imageLane, preProcessedImage, THRESH_BINARY_IMAGE_CANNY)
+            } catch (e: NoWindowFoundException) {
+                Imgproc.cvtColor(preProcessedImage, preProcessedImage, Imgproc.COLOR_GRAY2BGR)
+            }
         }
-        return Pair(imageLanes, preProcessedImage)
+        return Pair(imageLane, preProcessedImage)
     }
 
     private fun checkImage(image: Mat) {
@@ -64,12 +63,23 @@ class LaneFinder {
             throw LaneFinderException("Wrong image type")
     }
 
-    private fun preProcessImage(image: Mat): Mat {
+    private fun preProcessImageThreshold(image: Mat): Mat {
         val croppedImage = cropImage(image.clone())
+        // ToDo: try to move gaussian blur after warp
         Imgproc.GaussianBlur(croppedImage, croppedImage, Size(7.0, 7.0), 1.0)
         warpImage(croppedImage)
         Imgproc.threshold(croppedImage, croppedImage, getThreshValue(croppedImage), 255.0, Imgproc.THRESH_BINARY)
         Imgproc.cvtColor(croppedImage, croppedImage, Imgproc.COLOR_BGR2GRAY)
+        return croppedImage
+    }
+
+    private fun preProcessImageCanny(image: Mat): Mat {
+        val croppedImage = cropImage(image.clone())
+        // ToDo: try to move gaussian blur after warp
+        Imgproc.GaussianBlur(croppedImage, croppedImage, Size(7.0, 7.0), 1.0)
+        Imgproc.cvtColor(croppedImage, croppedImage, Imgproc.COLOR_BGR2GRAY)
+        Imgproc.Canny(croppedImage, croppedImage, 100.0, 100.0)
+        warpImage(croppedImage)
         return croppedImage
     }
 
@@ -118,6 +128,18 @@ class LaneFinder {
         val rightBottom = Point((WIDTH_WARPED_IMAGE - WARPED_DST_BOTTOM).toDouble(), HEIGHT_WARPED_IMAGE.toDouble())
         val leftBottom = Point(WARPED_DST_BOTTOM.toDouble(), HEIGHT_WARPED_IMAGE.toDouble())
         return MatOfPoint2f(leftTop, rightTop, rightBottom, leftBottom)
+    }
+
+    private fun findAndDrawLane(imageLane: Mat, preProcessedImage: Mat, threshBinary: Int) {
+        val windows = mWindowFinder.findWindows(BinaryImageMatWrapper(preProcessedImage.clone(), threshBinary))
+        Imgproc.cvtColor(preProcessedImage, preProcessedImage, Imgproc.COLOR_GRAY2BGR)
+        if (windows.first.size >= 2 && windows.second.size >= 2) {
+            drawWindows(preProcessedImage, windows.first)
+            drawWindows(preProcessedImage, windows.second)
+            drawLinesOnPreprocessedImage(preProcessedImage, windows)
+            drawLinesOnBlackOriginalImage(imageLane, windows)
+        } else
+            throw NoWindowFoundException("Not enough windows found. Minimum 2 windows required for each side.")
     }
 
     private fun drawLinesOnPreprocessedImage(preProcessedImage: Mat, windows: Pair<ArrayList<Window>, ArrayList<Window>>) {
