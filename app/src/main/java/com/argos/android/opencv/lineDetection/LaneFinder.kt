@@ -61,8 +61,8 @@ class LaneFinder {
     }
 
     private fun preProcessImage(image: Mat): Mat {
-        val croppedImage = cropImage(image)
-        Imgproc.GaussianBlur(croppedImage, croppedImage, Size(3.0, 3.0), 0.0)
+        val croppedImage = cropImage(image.clone())
+        Imgproc.GaussianBlur(croppedImage, croppedImage, Size(7.0, 7.0), 1.0)
         warpImage(croppedImage)
         Imgproc.threshold(croppedImage, croppedImage, getThreshValue(croppedImage), 255.0, Imgproc.THRESH_BINARY)
         Imgproc.cvtColor(croppedImage, croppedImage, Imgproc.COLOR_BGR2GRAY)
@@ -82,7 +82,7 @@ class LaneFinder {
                 values.add(subImage.get(y, x).average())
 
         values.sort()
-        for (i in 0..values.size/30)
+        for (i in 0..values.size/20)
             values.removeAt(values.lastIndex)
         for (i in 0..values.size*3/4)
             values.removeAt(0)
@@ -125,7 +125,7 @@ class LaneFinder {
     }
 
     private fun drawLinesOnBlackOriginalImage(image: Mat, windows: Pair<ArrayList<Window>, ArrayList<Window>>) {
-        val croppedPart = Mat(HEIGHT_WARPED_IMAGE, WIDTH_WARPED_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
+        val croppedPart = Mat(HEIGHT_WARPED_IMAGE, WIDTH_WARPED_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0, 0.0))
         drawLane(croppedPart, windows.first, windows.second)
         invWarpImage(croppedPart)
         croppedPart.copyTo(image.submat(Rect(0, HEIGHT_IMAGE - HEIGHT_CROPPED_IMAGE, WIDTH_IMAGE, HEIGHT_CROPPED_IMAGE)))
@@ -157,6 +157,8 @@ class LaneFinder {
     private fun getPoints(windows: ArrayList<Window>): ArrayList<Point> {
         windows.sortBy { window -> window.getMidpointY() }
         val points = ArrayList<Point>()
+
+        try { points.add(windows[0].getMidpointAbove()) } catch (e: WindowException) { }
 
         for (i in 0..(windows.lastIndex-1))
             points.add(windows[i].getMidpoint())
