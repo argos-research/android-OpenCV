@@ -261,16 +261,16 @@ class WindowTest {
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 3
         ))
         val window = Window(2, 4, 1, 2, image)
-        assertEquals(5, window.getPixelInWindow())
+        assertEquals(5, window.getNonZeroPixel())
 
         window.increaseX()
-        assertEquals(6, window.getPixelInWindow())
+        assertEquals(6, window.getNonZeroPixel())
 
         window.decreaseX()
-        assertEquals(5, window.getPixelInWindow())
+        assertEquals(5, window.getNonZeroPixel())
 
         window.setX(0)
-        assertEquals(3, window.getPixelInWindow())
+        assertEquals(3, window.getNonZeroPixel())
     }
 
     @Test
@@ -286,16 +286,16 @@ class WindowTest {
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)  // 6
         ))
         val window = Window(2, 4, 2, 2, image)
-        assertEquals(5, window.getPixelInWindow())
+        assertEquals(5, window.getNonZeroPixel())
 
         window.increaseY()
-        assertEquals(3, window.getPixelInWindow())
+        assertEquals(3, window.getNonZeroPixel())
 
         window.decreaseY()
-        assertEquals(5, window.getPixelInWindow())
+        assertEquals(5, window.getNonZeroPixel())
 
         window.setY(0)
-        assertEquals(1, window.getPixelInWindow())
+        assertEquals(1, window.getNonZeroPixel())
     }
 
     @Test
@@ -308,16 +308,16 @@ class WindowTest {
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  // 3
         ))
         val window = Window(2, 4, 1, 2, image)
-        assertEquals(5, window.getPixelInWindow())
+        assertEquals(5, window.getNonZeroPixel())
 
         window.increaseWidth()
-        assertEquals(7, window.getPixelInWindow())
+        assertEquals(7, window.getNonZeroPixel())
 
         window.decreaseWidth()
-        assertEquals(5, window.getPixelInWindow())
+        assertEquals(5, window.getNonZeroPixel())
 
         window.setWidth(1)
-        assertEquals(1, window.getPixelInWindow())
+        assertEquals(1, window.getNonZeroPixel())
     }
 
     @Test
@@ -333,16 +333,16 @@ class WindowTest {
                 intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)  // 6
         ))
         val window = Window(2, 4, 2, 2, image)
-        assertEquals(5, window.getPixelInWindow())
+        assertEquals(5, window.getNonZeroPixel())
 
         window.increaseHeight()
-        assertEquals(6, window.getPixelInWindow())
+        assertEquals(6, window.getNonZeroPixel())
 
         window.decreaseHeight()
-        assertEquals(5, window.getPixelInWindow())
+        assertEquals(5, window.getNonZeroPixel())
 
         window.setHeight(1)
-        assertEquals(3, window.getPixelInWindow())
+        assertEquals(3, window.getNonZeroPixel())
     }
 
     @Test

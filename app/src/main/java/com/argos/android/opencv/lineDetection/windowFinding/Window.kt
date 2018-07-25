@@ -47,7 +47,6 @@ class Window(x: Int, width: Int, y: Int, height: Int, private var mBinaryImage: 
         mPixelInWindow += countPixelInColumn(getX()) - countPixelInColumn(getBorderRight()+1)
     }
 
-
     private fun checkAndSetY(y: Int) {
         if (y in 0..(mBinaryImage.getHeight() - mHeight))
             mY = y
@@ -170,7 +169,7 @@ class Window(x: Int, width: Int, y: Int, height: Int, private var mBinaryImage: 
         return mY + mHeight - 1
     }
 
-    fun getPixelInWindow(): Int {
+    fun getNonZeroPixel(): Int {
         return mPixelInWindow
     }
 
