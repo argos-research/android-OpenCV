@@ -48,7 +48,8 @@ class WindowFinder(
             maximizeWindowWidthEnlargeLeft(lowerStartWindow)
             minimizeWindowWidthDecreaseRight(lowerStartWindow)
             minimizeWindowHeight(lowerStartWindow)
-            mWindowsLeft.add(lowerStartWindow)
+            if (lowerStartWindow.getWidth() <= mMaxWindowWith)
+                mWindowsLeft.add(lowerStartWindow)
         } catch (e: NoWindowFoundException) { }
 
         try {
@@ -56,11 +57,14 @@ class WindowFinder(
             maximizeWindowWidthEnlargeLeft(upperStartWindow)
             minimizeWindowWidthDecreaseRight(upperStartWindow)
             minimizeWindowHeight(upperStartWindow)
-            mWindowsLeft.add(upperStartWindow)
-        } catch (e: NoWindowFoundException) {
-            if (mWindowsLeft.isEmpty())
-                throw NoWindowFoundException("No start-windows found on left side")
-        }
+            if (upperStartWindow.getWidth() > mMaxWindowWith)
+                splitWindowAndAddToList(upperStartWindow, mWindowsLeft)
+            else
+                mWindowsLeft.add(upperStartWindow)
+        } catch (e: NoWindowFoundException) { }
+
+        if (mWindowsLeft.isEmpty())
+            throw NoWindowFoundException("No start-windows found on left side")
     }
 
     private fun findBigStartWindowLeft(): Window {
@@ -70,7 +74,7 @@ class WindowFinder(
     }
 
     private fun moveWindowLeftUntilMinNumberPixelInWindowFound(window: Window) {
-        while(window.getPixelInWindow() < mMinNumberPixelForWindow) {
+        while(window.getNonZeroPixel() < mMinNumberPixelForWindow) {
             try {
                 window.decreaseX()
             } catch (e: WindowException) {
@@ -94,7 +98,8 @@ class WindowFinder(
             maximizeWindowWidthEnlargeRight(lowerStartWindow)
             minimizeWindowWidthDecreaseLeft(lowerStartWindow)
             minimizeWindowHeight(lowerStartWindow)
-            mWindowsRight.add(lowerStartWindow)
+            if (lowerStartWindow.getWidth() <= mMaxWindowWith)
+                mWindowsRight.add(lowerStartWindow)
         } catch (e: NoWindowFoundException) {}
 
         try {
@@ -102,7 +107,10 @@ class WindowFinder(
             maximizeWindowWidthEnlargeRight(upperStartWindow)
             minimizeWindowWidthDecreaseLeft(upperStartWindow)
             minimizeWindowHeight(upperStartWindow)
-            mWindowsRight.add(upperStartWindow)
+            if (upperStartWindow.getWidth() > mMaxWindowWith)
+                splitWindowAndAddToList(upperStartWindow, mWindowsRight)
+            else
+                mWindowsRight.add(upperStartWindow)
         } catch (e: NoWindowFoundException) {
             if (mWindowsRight.isEmpty())
                 throw NoWindowFoundException("No start-windows found on left side")
@@ -116,13 +124,25 @@ class WindowFinder(
     }
 
     private fun moveWindowRightUntilMinNumberPixelInWindowFound(window: Window) {
-        while(window.getPixelInWindow() < mMinNumberPixelForWindow) {
+        while(window.getNonZeroPixel() < mMinNumberPixelForWindow) {
             try {
                 window.increaseX()
             } catch (e: WindowException) {
                 throw NoWindowFoundException("No position with enough pixel into the window")
             }
         }
+    }
+
+    private fun splitWindowAndAddToList(window: Window, list: ArrayList<Window>) {
+        val (upperWindow, lowerWindow) = window.splitWindowInHeight()
+        minimizeWindowWidth(upperWindow)
+        minimizeWindowHeight(upperWindow)
+        if (upperWindow.getWidth() <= mMaxWindowWith)
+            list.add(upperWindow)
+        minimizeWindowWidth(lowerWindow)
+        minimizeWindowHeight(lowerWindow)
+        if (lowerWindow.getWidth() <= mMaxWindowWith)
+            list.add(lowerWindow)
     }
 
     private fun findNextWindows(windows: ArrayList<Window>) {

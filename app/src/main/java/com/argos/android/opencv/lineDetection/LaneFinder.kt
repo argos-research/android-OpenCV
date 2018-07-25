@@ -4,6 +4,7 @@ import com.argos.android.opencv.lineDetection.windowFinding.*
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import kotlin.collections.ArrayList
+import kotlin.math.max
 
 class LaneFinderException(message: String) : Exception(message)
 
@@ -41,10 +42,13 @@ class LaneFinder {
         val imageLanes = Mat(HEIGHT_IMAGE, WIDTH_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0, 1.0))
         try {
             val windows = mWindowFinder.findWindows(BinaryImageMatWrapper(preProcessedImage.clone(), 250))
-            drawLinesOnPreprocessedImage(preProcessedImage, windows)
+            Imgproc.cvtColor(preProcessedImage, preProcessedImage, Imgproc.COLOR_GRAY2BGR)
             drawWindows(preProcessedImage, windows.first)
-            drawWindows(preProcessedImage, windows.second)
-            drawLinesOnBlackOriginalImage(imageLanes, windows)
+            drawWindows(preProcessedImage, windows.second)  
+            if (windows.first.size >= 2 && windows.second.size >= 2) {
+                drawLinesOnPreprocessedImage(preProcessedImage, windows)
+                drawLinesOnBlackOriginalImage(imageLanes, windows)
+            }
         } catch (e: NoWindowFoundException) {
             Imgproc.cvtColor(preProcessedImage, preProcessedImage, Imgproc.COLOR_GRAY2BGR)
         }
@@ -120,7 +124,6 @@ class LaneFinder {
         val croppedPart = Mat(HEIGHT_WARPED_IMAGE, WIDTH_WARPED_IMAGE, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
         drawLane(croppedPart, windows.first, windows.second)
 
-        Imgproc.cvtColor(preProcessedImage, preProcessedImage, Imgproc.COLOR_GRAY2BGR)
         Core.addWeighted(preProcessedImage, 1.0, croppedPart, 0.7, 0.0, preProcessedImage)
     }
 
