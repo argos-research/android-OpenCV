@@ -111,10 +111,10 @@ class WindowFinder(
                 splitWindowAndAddToList(upperStartWindow, mWindowsRight)
             else
                 mWindowsRight.add(upperStartWindow)
-        } catch (e: NoWindowFoundException) {
-            if (mWindowsRight.isEmpty())
-                throw NoWindowFoundException("No start-windows found on left side")
-        }
+        } catch (e: NoWindowFoundException) { }
+            
+        if (mWindowsRight.isEmpty())
+            throw NoWindowFoundException("No start-windows found on left side")
     }
 
     private fun findBigStartWindowRight(): Window {

@@ -47,9 +47,7 @@ class LaneFinder {
             preProcessedImage = preProcessImageCanny(image)
             try {
                 findAndDrawLane(imageLane, preProcessedImage, THRESH_BINARY_IMAGE_CANNY)
-            } catch (e: NoWindowFoundException) {
-                Imgproc.cvtColor(preProcessedImage, preProcessedImage, Imgproc.COLOR_GRAY2BGR)
-            }
+            } catch (e: NoWindowFoundException) { }
         }
         return Pair(imageLane, preProcessedImage)
     }
