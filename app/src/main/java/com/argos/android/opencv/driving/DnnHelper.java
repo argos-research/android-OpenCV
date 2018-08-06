@@ -100,8 +100,8 @@ public class DnnHelper {
                 int xRightTop = (int) (detections.get(i, 5)[0] * cols);
                 int yRightTop = (int) (detections.get(i, 6)[0] * rows);
 
-                //only count distance for cavallo
-                if(classId == 2) {
+                //only count distance for lynx
+                if(classId == 1) {
                     distance = getDistanceToCamera(yRightTop - yLeftBottom);
                 }
 

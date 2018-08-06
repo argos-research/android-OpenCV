@@ -1,13 +1,11 @@
 package com.argos.android.opencv.camera
 
+import android.util.Log
 import com.argos.android.opencv.activity.CameraActivity
 import com.argos.android.opencv.driving.DnnHelper
 import com.argos.android.opencv.lineDetection.windowFinding.LaneFinder
 import com.argos.android.opencv.model.Feature
-import org.opencv.core.CvType
-import org.opencv.core.Mat
-import org.opencv.core.Rect
-import org.opencv.core.Scalar
+import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 
 class CameraFrameManager(private val mCaller: CameraFrameMangerCaller, private val mFeature: String, private val mDnnHelper: DnnHelper) : Thread() {
@@ -44,15 +42,20 @@ class CameraFrameManager(private val mCaller: CameraFrameMangerCaller, private v
     }
 
     private fun overTaking(frame: Mat) {
-        val dnnResponse = mDnnHelper.processMat(frame)
-        mDistance = dnnResponse.distance
-        val frameInfo = dnnResponse.mat
-        val grayImage = Mat(CameraActivity.SCREEN_HEIGHT, mGreyWidth, CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
-        grayImage.copyTo(frameInfo.submat(Rect(0, 0, mGreyWidth, CameraActivity.SCREEN_HEIGHT)))
-        grayImage.copyTo(frameInfo.submat(Rect(CameraActivity.SCREEN_WIDTH-mGreyWidth, 0, mGreyWidth, CameraActivity.SCREEN_HEIGHT)))
-        Imgproc.cvtColor(frameInfo, frameInfo, Imgproc.COLOR_RGB2BGR)
-        setFrameInfo(frameInfo.clone())
-        mCaller.setDistance(mDistance)
+        Log.d("THREAD",frame.toString())
+        try {
+            val dnnResponse = mDnnHelper.processMat(frame)
+            mDistance = dnnResponse.distance
+            val frameInfo = dnnResponse.mat
+            val grayImage = Mat(CameraActivity.SCREEN_HEIGHT, mGreyWidth, CvType.CV_8UC3, Scalar(255.0, 0.0, 0.0))
+            grayImage.copyTo(frameInfo.submat(Rect(0, 0, mGreyWidth, CameraActivity.SCREEN_HEIGHT)))
+            grayImage.copyTo(frameInfo.submat(Rect(CameraActivity.SCREEN_WIDTH - mGreyWidth, 0, mGreyWidth, CameraActivity.SCREEN_HEIGHT)))
+            Imgproc.cvtColor(frameInfo, frameInfo, Imgproc.COLOR_RGB2BGR)
+            setFrameInfo(frameInfo.clone())
+            mCaller.setDistance(mDistance)
+        }catch (e:CvException){
+
+        }
 
     }
 

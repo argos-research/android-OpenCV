@@ -1,9 +1,9 @@
 package com.argos.android.opencv.activity
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.text.InputType
@@ -11,18 +11,21 @@ import android.util.Log
 import android.view.SurfaceView
 import android.view.View
 import android.widget.EditText
+import com.android.volley.Request
 import com.argos.android.opencv.R
 import com.argos.android.opencv.camera.*
 import com.argos.android.opencv.driving.DnnHelper
 import com.argos.android.opencv.model.Feature
+import com.argos.android.opencv.network.APIController
+import com.argos.android.opencv.network.ServiceVolley
 import kotlinx.android.synthetic.main.activity_camera.*
+import org.json.JSONObject
 import org.opencv.android.*
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import java.text.DecimalFormat
+import kotlin.concurrent.thread
 import kotlin.math.max
-
-
 
 
 class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListener2, CameraFrameMangerCaller {
@@ -38,9 +41,19 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     private lateinit var mFeatureString: String
     private var cascadeFilePath: String? = null
 
-    private lateinit var mServerString: String
 
+    //Overtaking scenario
     private var dnnHelper: DnnHelper = DnnHelper()
+    private val service = ServiceVolley()
+    private val apiController = APIController(service)
+    private var mServerString: String? = "http://10.0.0.3:9080"
+    private var mSpeed = 44.0
+    private val mSlowSpeed = 20.0
+    private val mFastSpeed = 50.0
+    private var mDistance = 0.0
+    private var isOvertaking = false
+    private var hasPassed = false
+
 
     private val loader = object : BaseLoaderCallback(this) {
         override fun onManagerConnected(status: Int) {
@@ -71,6 +84,9 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     private fun initExtras() {
         mFeatureString = intent.getStringExtra("feature")
         cascadeFilePath = intent.extras.getString("cascadeFilePath")
+        if (mFeatureString == Feature.OVERTAKING) {
+            showInputDialogue()
+        }
     }
 
     private fun initView() {
@@ -114,20 +130,19 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, this, loader)
         }
 
-        mCameraFrameManager = CameraFrameManager(this, mFeatureString,dnnHelper)
+        mCameraFrameManager = CameraFrameManager(this, mFeatureString, dnnHelper)
         mCameraFrameManager.start()
     }
 
     override fun onCameraViewStarted(width: Int, height: Int) {
         cameraView!!.enableFpsMeter()
-        if(mFeatureString == Feature.OVERTAKING) {
-            showInputDialouge()
-            dnnHelper.onCameraViewStarted(this)
-        }
+        dnnHelper.onCameraViewStarted(this)
+
     }
 
     override fun onCameraViewStopped() {
-        mCameraFrameManager.finish()
+
+
     }
 
     override fun onCameraFrame(inputFrame: CameraBridgeViewBase.CvCameraViewFrame): Mat {
@@ -138,7 +153,8 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         try {
             val frameInfo = mCameraFrameManager.getFrameInfo()
             Core.addWeighted(image, 1.0, frameInfo, 0.7, 0.0, image)
-        } catch (e: NoCameraFrameInfoAvailableException) { }
+        } catch (e: NoCameraFrameInfoAvailableException) {
+        }
 
         if (mShowDebug)
             setImage(createDebugImage(image))
@@ -146,6 +162,10 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
             setImage(image)
 
         setFps()
+        if (mFeatureString == Feature.OVERTAKING) {
+            getCurrentLane()
+            setCurrentSpeed()
+        }
         return mCurrentFrame
     }
 
@@ -179,35 +199,126 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         }
     }
 
-    private fun showInputDialouge(){
+    private fun showInputDialogue() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Title")
+        builder.setTitle("Enter server ip")
 
         // Set up the input
         val input = EditText(this)
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_CLASS_NUMBER
+        input.setText("10.0.0.3")
         builder.setView(input)
 
         // Set up the buttons
-        builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which -> mServerString = input.text.toString() })
-        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
+        builder.setPositiveButton("OK", { dialog, which ->
+            mServerString = "http://" + input.text.toString() + ":9080"
+            val path = "/setSpeed/"
+            val params = JSONObject()
+            params.put("speed", mSlowSpeed)
+            apiController.request(mServerString + path, params, { response ->
+                mSpeed = mSlowSpeed
+            }, Request.Method.POST)
+
+
+            params.put("speed", mFastSpeed)
+            val handler = Handler()
+            handler.postDelayed({
+                apiController.request(mServerString + path, params, { response ->
+                    mSpeed = mFastSpeed
+                }, Request.Method.POST)
+            }, 7000)
+
+
+        })
+        builder.setNegativeButton("Cancel", { dialog, which -> dialog.cancel() })
 
         builder.show()
     }
 
+    var distanceTreshHold = 0.0
+
     @SuppressLint("SetTextI18n")
     override fun setDistance(distance: Double) {
         runOnUiThread {
-            if(distance < 0.5)
+            if (distance < 0.5)
                 txtDistance.text = "-"
             else
                 txtDistance.text = "${distance}m"
         }
+
+        checkOverTaking(distance)
+
+    }
+
+
+    private fun checkOverTaking(distance: Double) {
+        if (distance < 10 && mSpeed >= mFastSpeed && mDistance != distance && !isOvertaking) {
+            distanceTreshHold++
+        }
+        mDistance = distance
+        if (distanceTreshHold >= 12) {
+            distanceTreshHold = 0.0
+
+            val path = "/moveLeft/"
+            val params = JSONObject()
+            apiController.request(mServerString + path, params, { response ->
+                txtCurrentLane.setText("Lane: " + response?.getInt("lane"))
+            }, Request.Method.GET)
+
+            isOvertaking = true
+            var timePassed = 0
+            thread(start = true) {
+                while (isOvertaking) {
+
+                    Thread.sleep(250)
+                    timePassed +=250
+
+                    val path = "/getSensor/1"
+                    apiController.request(mServerString + path, JSONObject(), { response ->
+                        if (response != null) {
+                            val sensorDistance = response.getDouble("distance")
+                            if (sensorDistance < 20 && sensorDistance >5 || timePassed > 20*1000){
+                                isOvertaking = false
+
+                            }
+                        }
+                    }, Request.Method.GET)
+                }
+                Thread.sleep(3000)
+
+                val path2 = "/moveRight/"
+                apiController.request(mServerString + path2, JSONObject(), { _ ->
+                }, Request.Method.GET)
+
+            }
+        }
+
+    }
+
+
+
+
+    var i = 0
+    private fun getCurrentLane() {
+        if (i % 30 == 0 && !mServerString.isNullOrEmpty()) {
+            val path = "/getLane/"
+            val params = JSONObject()
+            apiController.request(mServerString + path, params, { response ->
+                txtCurrentLane.setText("Lane: " + response?.getInt("lane"))
+            }, Request.Method.GET)
+            i = 0
+
+        }
+        i++
+    }
+
+    private fun setCurrentSpeed() {
+        runOnUiThread { txtCurrentSpeed.setText("" + mSpeed + " km/h") }
     }
 
     // FPS counter CODE
-    private fun setFps(){
+    private fun setFps() {
         runOnUiThread {
             measure()
             txtFps.text = mStrfps
