@@ -5,8 +5,8 @@ import android.support.annotation.DrawableRes
 class Feature(var featureName: String?, @field:DrawableRes var featureThumbnail: Int) {
 
     companion object {
-        const val LANE_DETECTION = "lane_detection"
-        const val OVERTAKING = "overtaking"
+        const val LANE_DETECTION = "Lane Detection"
+        const val OVERTAKING = "Overtaking"
     }
 
 }

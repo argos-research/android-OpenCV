@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/card_image_height"
                 android:scaleType="centerCrop"
-                android:src="@drawable/lane_detection_thumbnail"/>
+                android:src="@drawable/land_detection_thumbnail"/>
 
         </FrameLayout>
 

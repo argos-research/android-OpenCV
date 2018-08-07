@@ -88,8 +88,8 @@ class MainActivity : AppCompatActivity(), MainActivityCallback, DialogCallback {
     }
 
     private fun initList() {
-        mFeatureList.add(Feature(Feature.OVERTAKING, R.drawable.vehicle_detection_thumbnail))
-        mFeatureList.add(Feature(Feature.LANE_DETECTION, R.drawable.lane_detection_thumbnail))
+        mFeatureList.add(Feature(Feature.OVERTAKING, R.drawable.overtaking_thumbnail))
+        mFeatureList.add(Feature(Feature.LANE_DETECTION, R.drawable.land_detection_thumbnail))
 
         layoutManager = LinearLayoutManager(this)
         recyclerView!!.layoutManager = layoutManager
