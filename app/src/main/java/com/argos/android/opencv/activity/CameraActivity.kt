@@ -27,6 +27,10 @@ import org.opencv.imgproc.Imgproc
 import java.text.DecimalFormat
 import kotlin.concurrent.thread
 import kotlin.math.max
+import android.widget.CompoundButton
+import android.widget.Switch
+
+
 
 
 class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListener2, CameraFrameMangerCaller {
@@ -70,7 +74,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     private var mFpsCounter = FpsCounter()
     private lateinit var mCurrentFrame: Mat
-    private var mShowDebug = true
+    private var mShowDebug = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,8 +88,10 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     private fun initExtras() {
         mFeatureString = intent.getStringExtra("feature")
         cascadeFilePath = intent.extras.getString("cascadeFilePath")
-        if (mFeatureString == Feature.OVERTAKING) {
-            showInputDialogue()
+
+        when (mFeatureString) {
+            Feature.OVERTAKING -> showInputDialogue()
+            Feature.LANE_DETECTION -> mSwitchDebug.visibility = View.VISIBLE
         }
     }
 
@@ -97,6 +103,8 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         cameraView = findViewById(R.id.opencvCameraView)
         cameraView!!.visibility = SurfaceView.VISIBLE
         cameraView!!.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT)
+
+        mSwitchDebug.setOnCheckedChangeListener { _, isChecked -> mShowDebug = isChecked }
     }
 
     private fun initListener() {

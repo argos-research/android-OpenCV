@@ -15,4 +15,6 @@
     <string name="about_link_github">https://github.com/argos-research/android-OpenCV</string>
     <string name="title_source_code">Source code</string>
     <string name="license">Apache 2.0 license</string>
+
+    <string name="debug">Debug</string>
 </resources>
