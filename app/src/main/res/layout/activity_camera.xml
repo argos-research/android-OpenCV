@@ -34,7 +34,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
-        android:text="0"
+        android:text=""
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 
@@ -45,7 +45,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
-        android:text="0"
+        android:text=""
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 
@@ -57,7 +57,7 @@
         android:layout_marginTop="5dp"
 
         android:layout_centerHorizontal="true"
-        android:text="0"
+        android:text=""
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 
@@ -70,5 +70,5 @@
         android:layout_marginEnd="32dp"
         android:textColor="@android:color/white"
         android:textSize="20sp"
-        android:text="-" />
+        android:text="" />
 </RelativeLayout>

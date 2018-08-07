@@ -16,6 +16,7 @@ import com.argos.android.opencv.R
 import com.argos.android.opencv.camera.*
 import com.argos.android.opencv.driving.DnnHelper
 import com.argos.android.opencv.model.Feature
+import com.argos.android.opencv.model.FpsCounter
 import com.argos.android.opencv.network.APIController
 import com.argos.android.opencv.network.ServiceVolley
 import kotlinx.android.synthetic.main.activity_camera.*
@@ -41,7 +42,6 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     private lateinit var mFeatureString: String
     private var cascadeFilePath: String? = null
 
-
     //Overtaking scenario
     private var dnnHelper: DnnHelper = DnnHelper()
     private val service = ServiceVolley()
@@ -53,7 +53,6 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
     private var mDistance = 0.0
     private var isOvertaking = false
     private var hasPassed = false
-
 
     private val loader = object : BaseLoaderCallback(this) {
         override fun onManagerConnected(status: Int) {
@@ -69,6 +68,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     private lateinit var mCameraFrameManager: CameraFrameManager
 
+    private var mFpsCounter = FpsCounter()
     private lateinit var mCurrentFrame: Mat
     private var mShowDebug = true
 
@@ -162,6 +162,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
             setImage(image)
 
         setFps()
+
         if (mFeatureString == Feature.OVERTAKING) {
             getCurrentLane()
             setCurrentSpeed()
@@ -181,7 +182,14 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         }
     }
 
+    private fun setFps() {
+        runOnUiThread {
+            txtFps.text = mFpsCounter.getFps()
+        }
+    }
+
     override fun getCopyOfCurrentFrame(): Mat {
+        mFpsCounter.newFrame()
         try {
             return mCurrentFrame.clone()
         } catch (e: UninitializedPropertyAccessException) {
@@ -251,7 +259,6 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     }
 
-
     private fun checkOverTaking(distance: Double) {
         if (distance < 10 && mSpeed >= mFastSpeed && mDistance != distance && !isOvertaking) {
             distanceTreshHold++
@@ -296,9 +303,6 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     }
 
-
-
-
     var i = 0
     private fun getCurrentLane() {
         if (i % 30 == 0 && !mServerString.isNullOrEmpty()) {
@@ -315,46 +319,5 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     private fun setCurrentSpeed() {
         runOnUiThread { txtCurrentSpeed.setText("" + mSpeed + " km/h") }
-    }
-
-    // FPS counter CODE
-    private fun setFps() {
-        runOnUiThread {
-            measure()
-            txtFps.text = mStrfps
-        }
-    }
-
-    private var mFramesCouner: Int = 0
-    private var mFrequency: Double = 0.toDouble()
-    private var mprevFrameTime: Long = 0
-    private var mStrfps: String? = null
-    private var mIsInitialized = false
-    private val FPS_FORMAT = DecimalFormat("0.00")
-    private val STEP = 20
-
-    private fun init() {
-        mFramesCouner = 0
-        mFrequency = Core.getTickFrequency()
-        mprevFrameTime = Core.getTickCount()
-        mStrfps = ""
-
-    }
-
-    private fun measure() {
-        if (!mIsInitialized) {
-            init()
-            mIsInitialized = true
-        } else {
-            mFramesCouner++
-            if (mFramesCouner % STEP == 0) {
-                val time = Core.getTickCount()
-                val fps = STEP * mFrequency / (time - mprevFrameTime)
-                mprevFrameTime = time
-
-                mStrfps = FPS_FORMAT.format(fps) + " FPS"
-                Log.i(CameraActivity::class.java.simpleName, mStrfps)
-            }
-        }
     }
 }
