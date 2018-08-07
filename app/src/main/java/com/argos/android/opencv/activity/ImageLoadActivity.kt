@@ -4,11 +4,13 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.ImageView
 import com.argos.android.opencv.R
 import com.argos.android.opencv.driving.DnnHelper
 import com.argos.android.opencv.lineDetection.LaneFinder
 import com.argos.android.opencv.model.Feature
+import kotlinx.android.synthetic.main.activity_image_load.*
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
@@ -33,6 +35,8 @@ class ImageLoadActivity : AppCompatActivity() {
     private var dnnHelper: DnnHelper = DnnHelper()
     private var laneFinder = LaneFinder()
 
+    private var mShowDebug = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_load)
@@ -54,10 +58,19 @@ class ImageLoadActivity : AppCompatActivity() {
         cascadeFilePath = intent.extras!!.getString("cascadeFilePath")
         dnnHelper.onCameraViewStarted(this)
 
+        when (feature) {
+            Feature.LANE_DETECTION -> mSwitchDebugImage.visibility = View.VISIBLE
+        }
     }
 
     private fun initView() {
         imageView = findViewById(R.id.imageView)
+
+        mSwitchDebugImage.setOnCheckedChangeListener { _, isChecked ->
+            mShowDebug = isChecked
+            processImage()
+            setImage()
+        }
     }
 
     private fun processImage() {
@@ -85,10 +98,14 @@ class ImageLoadActivity : AppCompatActivity() {
         val (imageLanes, binaryImage) = laneFinder.getLanesAndBinaryImage(img.clone())
 
         Core.addWeighted(img, 1.0, imageLanes, 0.5, 0.0, imageLanes)
-        val displayedImage = Mat(Size((imageLanes.width() + binaryImage.width()).toDouble(), max(imageLanes.height(), binaryImage.height()).toDouble()), CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
-        imageLanes.copyTo(displayedImage.submat(Rect(0, 0, imageLanes.width(), imageLanes.height())))
-        binaryImage.copyTo(displayedImage.submat(Rect(imageLanes.width(), 0, binaryImage.width(), binaryImage.height())))
-        image = displayedImage
+        image = if (mShowDebug) {
+            val displayedImage = Mat(Size((imageLanes.width() + binaryImage.width()).toDouble(), max(imageLanes.height(), binaryImage.height()).toDouble()), CvType.CV_8UC3, Scalar(0.0, 0.0, 0.0))
+            imageLanes.copyTo(displayedImage.submat(Rect(0, 0, imageLanes.width(), imageLanes.height())))
+            binaryImage.copyTo(displayedImage.submat(Rect(imageLanes.width(), 0, binaryImage.width(), binaryImage.height())))
+            displayedImage
+        } else {
+            imageLanes
+        }
     }
 
     private fun setImage() {

@@ -73,7 +73,7 @@
         android:text="" />
 
     <Switch
-        android:id="@+id/mSwitchDebug"
+        android:id="@+id/mSwitchDebugCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

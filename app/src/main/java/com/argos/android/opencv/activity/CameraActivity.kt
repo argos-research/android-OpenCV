@@ -24,13 +24,8 @@ import org.json.JSONObject
 import org.opencv.android.*
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
-import java.text.DecimalFormat
 import kotlin.concurrent.thread
 import kotlin.math.max
-import android.widget.CompoundButton
-import android.widget.Switch
-
-
 
 
 class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListener2, CameraFrameMangerCaller {
@@ -91,7 +86,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
         when (mFeatureString) {
             Feature.OVERTAKING -> showInputDialogue()
-            Feature.LANE_DETECTION -> mSwitchDebug.visibility = View.VISIBLE
+            Feature.LANE_DETECTION -> mSwitchDebugCamera.visibility = View.VISIBLE
         }
     }
 
@@ -104,7 +99,7 @@ class CameraActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         cameraView!!.visibility = SurfaceView.VISIBLE
         cameraView!!.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT)
 
-        mSwitchDebug.setOnCheckedChangeListener { _, isChecked -> mShowDebug = isChecked }
+        mSwitchDebugCamera.setOnCheckedChangeListener { _, isChecked -> mShowDebug = isChecked }
     }
 
     private fun initListener() {
