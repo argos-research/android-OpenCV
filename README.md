@@ -1,5 +1,9 @@
 # ArgOS DriveAssist
 
+
+**Attention: This branch contains legacy software, please switch to the master branch for an updated version.**
+
+
 ![alt header](https://github.com/argos-research/android-OpenCV/blob/master/screenshots/header.png)
 
 OpenCV-based object detection framework on Android that provides driving assistance capabilities on the Speed Dreams simulator.
