@@ -1,21 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_camera"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <org.opencv.android.JavaCameraView
+        android:id="@+id/opencvCameraView"
+        android:visibility="invisible"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:id="@+id/opencv_cameraview"/>
+        />
+
+    <View
+        android:id="@+id/blackBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"/>
 
     <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:id="@+id/txtFps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/margin_normal"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/straight"
-        android:tint="@color/arrow_direction"
-        android:id="@+id/imageview_direction"/>
-</FrameLayout>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/txtCurrentLane"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/txtCurrentSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtFps"
+        android:layout_marginTop="5dp"
+
+        android:layout_centerHorizontal="true"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/txtDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/txtFps"
+        android:layout_marginEnd="32dp"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:text="" />
+
+    <Switch
+        android:id="@+id/mSwitchDebugCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:textColor="@android:color/white"
+        android:visibility="invisible"
+        android:text="@string/debug" />
+</RelativeLayout>

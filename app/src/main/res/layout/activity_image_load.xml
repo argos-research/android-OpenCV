@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_image_load"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
-        android:layout_height="match_parent"
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:src="@drawable/scene_1"
-        android:id="@+id/image_view"/>
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/scene_1" />
 
-</FrameLayout>
+    <Switch
+        android:id="@+id/mSwitchDebugImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:textColor="@android:color/white"
+        android:visibility="invisible"
+        android:text="@string/debug" />
+
+</RelativeLayout>

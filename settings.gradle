@@ -1,2 +1,3 @@
-include ':app'
-include ':openCVLibrary320'
+include ':app', ':sdkopencv34'
+include ':sdkopencv34'
+project(':sdkopencv34').projectDir = new File('sdkopencv34')
